@@ -1,0 +1,6 @@
+@ERP_API_HostAddress = http://localhost:5033/api
+
+GET {{ERP_API_HostAddress}}/Ping
+Accept: application/json
+
+###
