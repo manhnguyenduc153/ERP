@@ -7,12 +7,12 @@ namespace ApiWithRoles.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountsController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AccountsController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -51,7 +51,6 @@ namespace ApiWithRoles.Controllers
                     roles = roles
                 });
             }
-
             return Unauthorized(new { message = "Invalid username or password!" });
         }
 
