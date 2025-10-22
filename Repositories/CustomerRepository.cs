@@ -25,7 +25,7 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT * FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT c.CustomerId, c.Name, c.Contact, c.Address FROM Customer c WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
@@ -49,7 +49,7 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT * FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Customer c WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {

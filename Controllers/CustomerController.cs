@@ -6,6 +6,7 @@ using ERP_API.Services.IServices;
 namespace ApiWithRoles.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {
         private readonly ILogger<CustomerController> _logger;
@@ -17,8 +18,7 @@ namespace ApiWithRoles.Controllers
             _CustomerService = CustomerService;
         }
 
-        [HttpGet]
-        [Route("api/get-list")]
+        [HttpGet("get-list")]
         public async Task<IActionResult> GetList([FromQuery] CustomerSearchModel model)
         {
             var result = await _CustomerService.GetListPaging(model);
@@ -26,8 +26,7 @@ namespace ApiWithRoles.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        [Route("api/get-by-id")]
+        [HttpGet("get-by-id")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _CustomerService.GetById(id);
@@ -35,8 +34,7 @@ namespace ApiWithRoles.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("api/add")]
+        [HttpPost("add")]
         public async Task<IActionResult> AddAsync(CustomerSaveModel model)
         {
             var result = await _CustomerService.Insert(model);
@@ -44,8 +42,7 @@ namespace ApiWithRoles.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        [Route("api/update")]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateAsync(CustomerSaveModel model)
         {
             var result = await _CustomerService.Update(model);
@@ -53,8 +50,7 @@ namespace ApiWithRoles.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
-        [Route("api/delete")]
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await _CustomerService.Delete(id);
