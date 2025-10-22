@@ -29,14 +29,12 @@ namespace MyProject.Data
         public async Task<T> AddAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
             return entity;
         }
 
         public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
         {
             await _dbContext.Set<T>().AddRangeAsync(entities);
-            await _dbContext.SaveChangesAsync();
             return entities;
         }
 

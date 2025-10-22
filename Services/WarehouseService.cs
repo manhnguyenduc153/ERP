@@ -1,7 +1,7 @@
-﻿using ERP_API.Enums;
+﻿using ERP_API.Entities;
+using ERP_API.Enums;
 using ERP_API.Models;
-using ERP_API.Entities;
-using ERP_API.Models;
+using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Services.IServices;
 using Mapster;
@@ -10,11 +10,11 @@ namespace ERP_API.Services
 {
     public class WarehouseService : IWarehouseService
     {
-        private readonly IWarehouseRepository _WarehouseRepository;
+        private readonly IWarehouseRepository _warehouseRepository;
         private readonly ILogger<WarehouseService> _logger;
         public WarehouseService(IWarehouseRepository WarehouseRepository, ILogger<WarehouseService> logger)
         {
-            _WarehouseRepository = WarehouseRepository;
+            _warehouseRepository = WarehouseRepository;
             _logger = logger;
         }
 
@@ -22,10 +22,10 @@ namespace ERP_API.Services
         {
             try
             {
-                var totalRecord = await _WarehouseRepository.GetTotalRecord(search);
+                var totalRecord = await _warehouseRepository.GetTotalRecord(search);
                 if (totalRecord > 0)
                 {
-                    var list = await _WarehouseRepository.GetListPaging(search);
+                    var list = await _warehouseRepository.GetListPaging(search);
                     var pagedList = new PagedList<WarehouseModel>(list, totalRecord, search.PageIndex, search.PageSize);
                     return new ResponseData<IEnumerable<WarehouseModel>>(true, pagedList, pagedList.GetMetaData());
                 }
@@ -46,10 +46,15 @@ namespace ERP_API.Services
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
                 var entity = model.Adapt<Warehouse>();
-                var result = await _WarehouseRepository.AddAsync(entity);
 
-                if (result != null)
-                    return new ResponseData<object>(true, entity); // trả về entity vừa tạo
+                await _warehouseRepository.AddAsync(entity);
+
+                var result = await _warehouseRepository.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    return new ResponseData<object>(true, entity);
+                }
 
                 return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
@@ -67,16 +72,21 @@ namespace ERP_API.Services
                 if (model.WarehouseId <= 0 || string.IsNullOrWhiteSpace(model.WarehouseName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _WarehouseRepository.GetByIdAsync(model.WarehouseId);
+                var entity = await _warehouseRepository.GetByIdAsync(model.WarehouseId);
                 if (entity == null)
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
 
                 var updateEntity = model.Adapt(entity);
-                await _WarehouseRepository.UpdateAsync(updateEntity);
+                await _warehouseRepository.UpdateAsync(updateEntity);
 
-                var result = await _WarehouseRepository.SaveChangesAsync();
+                var result = await _warehouseRepository.SaveChangesAsync();
 
-                return new ResponseData<object>(true, updateEntity);
+                if(result > 0)
+                {
+                    return new ResponseData<object>(true, updateEntity);
+                }
+
+                return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
             catch (Exception ex)
             {
@@ -92,7 +102,7 @@ namespace ERP_API.Services
                 if (id <= 0)
                     return new ResponseData<WarehouseModel>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _WarehouseRepository.GetByIdAsync(id);
+                var entity = await _warehouseRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return new ResponseData<WarehouseModel>(ErrorCodeAPI.NotFound);
@@ -115,14 +125,20 @@ namespace ERP_API.Services
                 if (id <= 0)
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _WarehouseRepository.GetByIdAsync(id);
+                var entity = await _warehouseRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
                 }
 
-                await _WarehouseRepository.DeleteAsync(entity);
-                return new ResponseData<object>(true, entity);
+                await _warehouseRepository.DeleteAsync(entity);
+
+                int result = await _warehouseRepository.SaveChangesAsync();
+
+                if (result > 0)
+                    return new ResponseData<object>(true, entity);
+
+                return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
             catch (Exception ex)
             {
