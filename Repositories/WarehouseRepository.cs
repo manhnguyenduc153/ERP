@@ -7,17 +7,16 @@ using Microsoft.EntityFrameworkCore;
 using MyProject.Data;
 using System;
 using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ERP_API.Repositories
 {
-    public class CustomerRepository : BaseRepository<Customer, ErpDbContext>, ICustomerRepository
+    public class WarehouseRepository : BaseRepository<Warehouse, ErpDbContext>, IWarehouseRepository
     {
-        public CustomerRepository(ErpDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext, unitOfWork)
+        public WarehouseRepository(ErpDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext, unitOfWork)
         {
         }
 
-        public async Task<IEnumerable<CustomerModel>> GetListPaging(CustomerSearchModel search)
+        public async Task<IEnumerable<WarehouseModel>> GetListPaging(WarehouseSearchModel search)
         {
             if (search == null)
             {
@@ -25,23 +24,23 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT c.CustomerId, c.Name, c.Contact, c.Address FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT w.WarehouseID, w.WarehouseName, w.Location FROM Warehouse w WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
-                query.Append(" AND (c.Name LIKE @keyword OR c.Contact LIKE @keyword OR c.Address LIKE @keyword) ");
+                query.Append(" AND (w.WarehouseName LIKE @keyword OR w.Location LIKE @keyword) ");
                 dynamicParameters.Add("keyword", "%" + search.Keyword + "%");
             }
 
-            query.Append(" ORDER BY c.CustomerId DESC ");
+            query.Append(" ORDER BY w.WarehouseID DESC ");
             StringUtils.AddPaging(query, search.PageIndex, search.PageSize);
 
-            IEnumerable<CustomerModel> lstStudent = await DapperQueryAsync<CustomerModel>(query.ToString(), dynamicParameters);
+            IEnumerable<WarehouseModel> lstStudent = await DapperQueryAsync<WarehouseModel>(query.ToString(), dynamicParameters);
 
             return lstStudent;
         }
 
-        public async Task<int> GetTotalRecord(CustomerSearchModel search)
+        public async Task<int> GetTotalRecord(WarehouseSearchModel search)
         {
             if (search == null)
             {
@@ -49,11 +48,11 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Warehouse w WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
-                query.Append(" AND (c.Name LIKE @keyword OR c.Contact LIKE @keyword OR c.Address LIKE @keyword) ");
+                query.Append(" AND (w.WarehouseName LIKE @keyword OR w.Location LIKE @keyword) ");
                 dynamicParameters.Add("keyword", "%" + search.Keyword + "%");
             }
 

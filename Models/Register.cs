@@ -1,4 +1,4 @@
-﻿namespace ApiWithRoles.Models
+﻿namespace ERP_API.Models
 {
     public class Register
     {

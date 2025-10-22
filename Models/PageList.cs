@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace ApiWithRoles.Models
+namespace ERP_API.Models
 {
     public class PagedList<T> : List<T>
     {

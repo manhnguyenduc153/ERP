@@ -1,10 +1,10 @@
-﻿using ApiWithRoles.Enums;
-using ApiWithRoles.Utilities;
-using ApiWithRoles.Models;
-using ApiWithRoles.Utilities;
+﻿using ERP_API.Enums;
+using ERP_API.Utilities;
+using ERP_API.Models;
+using ERP_API.Utilities;
 using System.Net;
 
-namespace ApiWithRoles.Models
+namespace ERP_API.Models
 {
     public class ResponseData<T> where T : class
     {

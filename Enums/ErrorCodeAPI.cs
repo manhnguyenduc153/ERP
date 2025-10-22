@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ApiWithRoles.Enums
+namespace ERP_API.Enums
 {
     public enum ErrorCodeAPI
     {

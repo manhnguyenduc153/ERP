@@ -8,45 +8,45 @@ using Mapster;
 
 namespace ERP_API.Services
 {
-    public class SupplierService : ISupplierService
+    public class WarehouseService : IWarehouseService
     {
-        private readonly ISupplierRepository _SupplierRepository;
-        private readonly ILogger<SupplierService> _logger;
-        public SupplierService(ISupplierRepository SupplierRepository, ILogger<SupplierService> logger)
+        private readonly IWarehouseRepository _WarehouseRepository;
+        private readonly ILogger<WarehouseService> _logger;
+        public WarehouseService(IWarehouseRepository WarehouseRepository, ILogger<WarehouseService> logger)
         {
-            _SupplierRepository = SupplierRepository;
+            _WarehouseRepository = WarehouseRepository;
             _logger = logger;
         }
 
-        public async Task<ResponseData<IEnumerable<SupplierModel>>> GetListPaging(SupplierSearchModel search)
+        public async Task<ResponseData<IEnumerable<WarehouseModel>>> GetListPaging(WarehouseSearchModel search)
         {
             try
             {
-                var totalRecord = await _SupplierRepository.GetTotalRecord(search);
+                var totalRecord = await _WarehouseRepository.GetTotalRecord(search);
                 if (totalRecord > 0)
                 {
-                    var list = await _SupplierRepository.GetListPaging(search);
-                    var pagedList = new PagedList<SupplierModel>(list, totalRecord, search.PageIndex, search.PageSize);
-                    return new ResponseData<IEnumerable<SupplierModel>>(true, pagedList, pagedList.GetMetaData());
+                    var list = await _WarehouseRepository.GetListPaging(search);
+                    var pagedList = new PagedList<WarehouseModel>(list, totalRecord, search.PageIndex, search.PageSize);
+                    return new ResponseData<IEnumerable<WarehouseModel>>(true, pagedList, pagedList.GetMetaData());
                 }
-                return new ResponseData<IEnumerable<SupplierModel>>(true);
+                return new ResponseData<IEnumerable<WarehouseModel>>(true);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new ResponseData<IEnumerable<SupplierModel>>(ex.Message);
+                return new ResponseData<IEnumerable<WarehouseModel>>(ex.Message);
             }
         }
 
-        public async Task<ResponseData<object>> Insert(SupplierSaveModel model)
+        public async Task<ResponseData<object>> Insert(WarehouseSaveModel model)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(model.SupplierName))
+                if (string.IsNullOrWhiteSpace(model.WarehouseName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = model.Adapt<Supplier>();
-                var result = await _SupplierRepository.AddAsync(entity);
+                var entity = model.Adapt<Warehouse>();
+                var result = await _WarehouseRepository.AddAsync(entity);
 
                 if (result != null)
                     return new ResponseData<object>(true, entity); // trả về entity vừa tạo
@@ -60,21 +60,21 @@ namespace ERP_API.Services
             }
         }
 
-        public async Task<ResponseData<object>> Update(SupplierSaveModel model)
+        public async Task<ResponseData<object>> Update(WarehouseSaveModel model)
         {
             try
             {
-                if (model.SupplierId <= 0 || string.IsNullOrWhiteSpace(model.SupplierName))
+                if (model.WarehouseId <= 0 || string.IsNullOrWhiteSpace(model.WarehouseName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _SupplierRepository.GetByIdAsync(model.SupplierId);
+                var entity = await _WarehouseRepository.GetByIdAsync(model.WarehouseId);
                 if (entity == null)
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
 
                 var updateEntity = model.Adapt(entity);
-                await _SupplierRepository.UpdateAsync(updateEntity);
+                await _WarehouseRepository.UpdateAsync(updateEntity);
 
-                var result = await _SupplierRepository.SaveChangesAsync();
+                var result = await _WarehouseRepository.SaveChangesAsync();
 
                 return new ResponseData<object>(true, updateEntity);
             }
@@ -85,26 +85,26 @@ namespace ERP_API.Services
             }
         }
 
-        public async Task<ResponseData<SupplierModel>> GetById(int id)
+        public async Task<ResponseData<WarehouseModel>> GetById(int id)
         {
             try
             {
                 if (id <= 0)
-                    return new ResponseData<SupplierModel>(ErrorCodeAPI.InvalidInput);
+                    return new ResponseData<WarehouseModel>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _SupplierRepository.GetByIdAsync(id);
+                var entity = await _WarehouseRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
-                    return new ResponseData<SupplierModel>(ErrorCodeAPI.NotFound);
+                    return new ResponseData<WarehouseModel>(ErrorCodeAPI.NotFound);
                 }
 
-                var model = entity.Adapt<SupplierModel>();
-                return new ResponseData<SupplierModel>(true, model);
+                var model = entity.Adapt<WarehouseModel>();
+                return new ResponseData<WarehouseModel>(true, model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new ResponseData<SupplierModel>(ex.Message);
+                return new ResponseData<WarehouseModel>(ex.Message);
             }
         }
 
@@ -115,13 +115,13 @@ namespace ERP_API.Services
                 if (id <= 0)
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _SupplierRepository.GetByIdAsync(id);
+                var entity = await _WarehouseRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
                 }
 
-                await _SupplierRepository.DeleteAsync(entity);
+                await _WarehouseRepository.DeleteAsync(entity);
                 return new ResponseData<object>(true, entity);
             }
             catch (Exception ex)

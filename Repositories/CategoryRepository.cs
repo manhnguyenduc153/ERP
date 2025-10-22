@@ -11,13 +11,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ERP_API.Repositories
 {
-    public class CustomerRepository : BaseRepository<Customer, ErpDbContext>, ICustomerRepository
+    public class CategoryRepository : BaseRepository<Category, ErpDbContext>, ICategoryRepository
     {
-        public CustomerRepository(ErpDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext, unitOfWork)
+        public CategoryRepository(ErpDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext, unitOfWork)
         {
         }
 
-        public async Task<IEnumerable<CustomerModel>> GetListPaging(CustomerSearchModel search)
+        public async Task<IEnumerable<CategoryModel>> GetListPaging(CategorySearchModel search)
         {
             if (search == null)
             {
@@ -25,23 +25,23 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT c.CustomerId, c.Name, c.Contact, c.Address FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT c.CategoryID, c.CategoryName, c.Description FROM Category c WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
-                query.Append(" AND (c.Name LIKE @keyword OR c.Contact LIKE @keyword OR c.Address LIKE @keyword) ");
+                query.Append(" AND (c.CategoryName LIKE @keyword OR c.Description LIKE @keyword) ");
                 dynamicParameters.Add("keyword", "%" + search.Keyword + "%");
             }
 
-            query.Append(" ORDER BY c.CustomerId DESC ");
+            query.Append(" ORDER BY c.CategoryID DESC ");
             StringUtils.AddPaging(query, search.PageIndex, search.PageSize);
 
-            IEnumerable<CustomerModel> lstStudent = await DapperQueryAsync<CustomerModel>(query.ToString(), dynamicParameters);
+            IEnumerable<CategoryModel> lstStudent = await DapperQueryAsync<CategoryModel>(query.ToString(), dynamicParameters);
 
             return lstStudent;
         }
 
-        public async Task<int> GetTotalRecord(CustomerSearchModel search)
+        public async Task<int> GetTotalRecord(CategorySearchModel search)
         {
             if (search == null)
             {
@@ -49,11 +49,11 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Category c WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
-                query.Append(" AND (c.Name LIKE @keyword OR c.Contact LIKE @keyword OR c.Address LIKE @keyword) ");
+                query.Append(" AND (c.CategoryName LIKE @keyword OR c.Description LIKE @keyword) ");
                 dynamicParameters.Add("keyword", "%" + search.Keyword + "%");
             }
 

@@ -1,9 +1,9 @@
-﻿using ApiWithRoles.Models;
+﻿using ERP_API.Models;
 using ERP_API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiWithRoles.Controllers
+namespace ERP_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
