@@ -6,7 +6,7 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/categories")]
     public class CategoryController : ControllerBase
     {
         private readonly ILogger<CategoryController> _logger;
@@ -18,7 +18,7 @@ namespace ERP_API.Controllers
             _CategoryService = CategoryService;
         }
 
-        [HttpGet("get-list")]
+        [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] CategorySearchModel model)
         {
             var result = await _CategoryService.GetListPaging(model);
@@ -26,7 +26,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _CategoryService.GetById(id);
@@ -34,7 +34,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAsync(CategorySaveModel model)
         {
             var result = await _CategoryService.Insert(model);
@@ -42,7 +42,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(CategorySaveModel model)
         {
             var result = await _CategoryService.Update(model);
@@ -50,7 +50,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await _CategoryService.Delete(id);

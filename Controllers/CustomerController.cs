@@ -6,7 +6,7 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/suppliers")]
     public class SupplierController : ControllerBase
     {
         private readonly ILogger<SupplierController> _logger;
@@ -18,7 +18,7 @@ namespace ERP_API.Controllers
             _SupplierService = SupplierService;
         }
 
-        [HttpGet("get-list")]
+        [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] SupplierSearchModel model)
         {
             var result = await _SupplierService.GetListPaging(model);
@@ -26,7 +26,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _SupplierService.GetById(id);
@@ -34,7 +34,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAsync(SupplierSaveModel model)
         {
             var result = await _SupplierService.Insert(model);
@@ -42,7 +42,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(SupplierSaveModel model)
         {
             var result = await _SupplierService.Update(model);
@@ -50,7 +50,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await _SupplierService.Delete(id);

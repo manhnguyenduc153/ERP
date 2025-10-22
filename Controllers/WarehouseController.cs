@@ -6,7 +6,7 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/warehouses")]
     public class WarehouseController : ControllerBase
     {
         private readonly ILogger<WarehouseController> _logger;
@@ -18,7 +18,7 @@ namespace ERP_API.Controllers
             _WarehouseService = WarehouseService;
         }
 
-        [HttpGet("get-list")]
+        [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] WarehouseSearchModel model)
         {
             var result = await _WarehouseService.GetListPaging(model);
@@ -26,7 +26,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _WarehouseService.GetById(id);
@@ -34,7 +34,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAsync(WarehouseSaveModel model)
         {
             var result = await _WarehouseService.Insert(model);
@@ -42,7 +42,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(WarehouseSaveModel model)
         {
             var result = await _WarehouseService.Update(model);
@@ -50,7 +50,7 @@ namespace ERP_API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await _WarehouseService.Delete(id);
