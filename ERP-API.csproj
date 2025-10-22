@@ -21,6 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Repositories\WarehouseRepository.cs">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Repositories\WarehouseRepository.cs">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Repositories\CategoryRepository.cs">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Compile>

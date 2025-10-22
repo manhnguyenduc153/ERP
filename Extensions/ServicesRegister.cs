@@ -25,6 +25,10 @@ namespace ERP_API.Extensions
             //Category
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
+
+            //Warehouse
+            services.AddTransient<IWarehouseRepository, WarehouseRepository>();
+            services.AddScoped<IWarehouseService, WarehouseService>();
         }
     }
 }
