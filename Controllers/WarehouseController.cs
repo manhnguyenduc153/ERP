@@ -6,54 +6,54 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/warehouses")]
     public class WarehouseController : ControllerBase
     {
         private readonly ILogger<WarehouseController> _logger;
-        private readonly IWarehouseService _WarehouseService;
+        private readonly IWarehouseService _warehouseService;
 
         public WarehouseController(ILogger<WarehouseController> logger, IWarehouseService WarehouseService)
         {
             _logger = logger;
-            _WarehouseService = WarehouseService;
+            _warehouseService = WarehouseService;
         }
 
-        [HttpGet("get-list")]
+        [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] WarehouseSearchModel model)
         {
-            var result = await _WarehouseService.GetListPaging(model);
+            var result = await _warehouseService.GetListPaging(model);
 
             return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _WarehouseService.GetById(id);
+            var result = await _warehouseService.GetById(id);
 
             return Ok(result);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAsync(WarehouseSaveModel model)
         {
-            var result = await _WarehouseService.Insert(model);
+            var result = await _warehouseService.Insert(model);
 
             return Ok(result);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(WarehouseSaveModel model)
         {
-            var result = await _WarehouseService.Update(model);
+            var result = await _warehouseService.Update(model);
 
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await _WarehouseService.Delete(id);
+            var result = await _warehouseService.Delete(id);
 
             return Ok(result);
         }

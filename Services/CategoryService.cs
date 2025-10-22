@@ -1,20 +1,22 @@
-﻿using ERP_API.Enums;
+﻿using ERP_API.Entities;
+using ERP_API.Enums;
 using ERP_API.Models;
-using ERP_API.Entities;
 using ERP_API.Models;
+using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Services.IServices;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERP_API.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly ICategoryRepository _CategoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly ILogger<CategoryService> _logger;
         public CategoryService(ICategoryRepository CategoryRepository, ILogger<CategoryService> logger)
         {
-            _CategoryRepository = CategoryRepository;
+            _categoryRepository = CategoryRepository;
             _logger = logger;
         }
 
@@ -22,10 +24,10 @@ namespace ERP_API.Services
         {
             try
             {
-                var totalRecord = await _CategoryRepository.GetTotalRecord(search);
+                var totalRecord = await _categoryRepository.GetTotalRecord(search);
                 if (totalRecord > 0)
                 {
-                    var list = await _CategoryRepository.GetListPaging(search);
+                    var list = await _categoryRepository.GetListPaging(search);
                     var pagedList = new PagedList<CategoryModel>(list, totalRecord, search.PageIndex, search.PageSize);
                     return new ResponseData<IEnumerable<CategoryModel>>(true, pagedList, pagedList.GetMetaData());
                 }
@@ -46,10 +48,15 @@ namespace ERP_API.Services
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
                 var entity = model.Adapt<Category>();
-                var result = await _CategoryRepository.AddAsync(entity);
 
-                if (result != null)
-                    return new ResponseData<object>(true, entity); // trả về entity vừa tạo
+                await _categoryRepository.AddAsync(entity);
+
+                var result = await _categoryRepository.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    return new ResponseData<object>(true, entity);
+                }
 
                 return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
@@ -67,16 +74,22 @@ namespace ERP_API.Services
                 if (model.CategoryId <= 0 || string.IsNullOrWhiteSpace(model.CategoryName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _CategoryRepository.GetByIdAsync(model.CategoryId);
+                var entity = await _categoryRepository.GetByIdAsync(model.CategoryId);
                 if (entity == null)
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
 
                 var updateEntity = model.Adapt(entity);
-                await _CategoryRepository.UpdateAsync(updateEntity);
 
-                var result = await _CategoryRepository.SaveChangesAsync();
+                await _categoryRepository.UpdateAsync(updateEntity);
 
-                return new ResponseData<object>(true, updateEntity);
+                var result = await _categoryRepository.SaveChangesAsync();
+
+                if(result > 0)
+                {
+                    return new ResponseData<object>(true, updateEntity);
+                }
+
+                return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
             catch (Exception ex)
             {
@@ -92,7 +105,7 @@ namespace ERP_API.Services
                 if (id <= 0)
                     return new ResponseData<CategoryModel>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _CategoryRepository.GetByIdAsync(id);
+                var entity = await _categoryRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return new ResponseData<CategoryModel>(ErrorCodeAPI.NotFound);
@@ -115,14 +128,18 @@ namespace ERP_API.Services
                 if (id <= 0)
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _CategoryRepository.GetByIdAsync(id);
+                var entity = await _categoryRepository.GetByIdAsync(id);
                 if (entity == null)
-                {
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
-                }
 
-                await _CategoryRepository.DeleteAsync(entity);
-                return new ResponseData<object>(true, entity);
+                await _categoryRepository.DeleteAsync(entity);
+
+                int result = await _categoryRepository.SaveChangesAsync(); 
+
+                if (result > 0)
+                    return new ResponseData<object>(true, entity);
+
+                return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
             catch (Exception ex)
             {
@@ -130,5 +147,6 @@ namespace ERP_API.Services
                 return new ResponseData<object>(ex.Message);
             }
         }
+
     }
 }

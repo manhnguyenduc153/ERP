@@ -6,54 +6,54 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class CustomerController : ControllerBase
+    [Route("api/suppliers")]
+    public class SupplierController : ControllerBase
     {
-        private readonly ILogger<CustomerController> _logger;
-        private readonly ICustomerService _CustomerService;
+        private readonly ILogger<SupplierController> _logger;
+        private readonly ISupplierService _supplierService;
 
-        public CustomerController(ILogger<CustomerController> logger, ICustomerService CustomerService)
+        public SupplierController(ILogger<SupplierController> logger, ISupplierService SupplierService)
         {
             _logger = logger;
-            _CustomerService = CustomerService;
+            _supplierService = SupplierService;
         }
 
-        [HttpGet("get-list")]
-        public async Task<IActionResult> GetList([FromQuery] CustomerSearchModel model)
+        [HttpGet]
+        public async Task<IActionResult> GetList([FromQuery] SupplierSearchModel model)
         {
-            var result = await _CustomerService.GetListPaging(model);
+            var result = await _supplierService.GetListPaging(model);
 
             return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _CustomerService.GetById(id);
+            var result = await _supplierService.GetById(id);
 
             return Ok(result);
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddAsync(CustomerSaveModel model)
+        [HttpPost]
+        public async Task<IActionResult> AddAsync(SupplierSaveModel model)
         {
-            var result = await _CustomerService.Insert(model);
+            var result = await _supplierService.Insert(model);
 
             return Ok(result);
         }
 
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdateAsync(CustomerSaveModel model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(SupplierSaveModel model)
         {
-            var result = await _CustomerService.Update(model);
+            var result = await _supplierService.Update(model);
 
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await _CustomerService.Delete(id);
+            var result = await _supplierService.Delete(id);
 
             return Ok(result);
         }

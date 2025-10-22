@@ -6,54 +6,54 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/categories")]
     public class CategoryController : ControllerBase
     {
         private readonly ILogger<CategoryController> _logger;
-        private readonly ICategoryService _CategoryService;
+        private readonly ICategoryService _categoryService;
 
         public CategoryController(ILogger<CategoryController> logger, ICategoryService CategoryService)
         {
             _logger = logger;
-            _CategoryService = CategoryService;
+            _categoryService = CategoryService;
         }
 
-        [HttpGet("get-list")]
+        [HttpGet]
         public async Task<IActionResult> GetList([FromQuery] CategorySearchModel model)
         {
-            var result = await _CategoryService.GetListPaging(model);
+            var result = await _categoryService.GetListPaging(model);
 
             return Ok(result);
         }
 
-        [HttpGet("get-by-id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var result = await _CategoryService.GetById(id);
+            var result = await _categoryService.GetById(id);
 
             return Ok(result);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAsync(CategorySaveModel model)
         {
-            var result = await _CategoryService.Insert(model);
+            var result = await _categoryService.Insert(model);
 
             return Ok(result);
         }
 
-        [HttpPut("update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(CategorySaveModel model)
         {
-            var result = await _CategoryService.Update(model);
+            var result = await _categoryService.Update(model);
 
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await _CategoryService.Delete(id);
+            var result = await _categoryService.Delete(id);
 
             return Ok(result);
         }
