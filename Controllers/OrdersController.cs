@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ERP_API.DTOS.Order;
+using ERP_API.Repositories;
+using ERP_API.Services.IServices;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ERP_API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrdersController : ControllerBase
+    {
+        private readonly IOrderService _service;
+
+        public OrdersController(IOrderService service)
+        {
+            _service = service;
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrders()
+        {
+            var orders = await _service.GetAllOrdersAsync();
+
+            return Ok(orders);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(int id)
+        {
+            var order = await _service.GetOrderByIdAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(order);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO createOrderDTO)
+        {
+            // Solve more cases and validations as needed *
+
+            var orderEntity = Mappers.OrderMapper.ToCreateEntity(createOrderDTO);
+            var result = await _service.CreateOrderAsync(orderEntity);
+
+            if (!result)
+            {
+                return BadRequest("Failed to create order.");
+            }
+            return CreatedAtAction(nameof(GetOrderById), new { id = orderEntity.SalesOrderId }, orderEntity);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var order = await _service.GetOrderByIdAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _service.DeleteOrderAsync(order);
+            if (!result)
+            {
+                return BadRequest("Failed to delete order.");
+            }
+
+            return NoContent();
+        }
+
+    }
+}
