@@ -46,8 +46,11 @@ namespace ERP_API.Controllers
         {
             // Solve more cases and validations as needed *
 
+            // Case 1: Customer already exists
             var orderEntity = Mappers.OrderMapper.ToCreateEntity(createOrderDTO);
             var result = await _service.CreateOrderAsync(orderEntity);
+
+            // Case 2: New Customer creation logic can be added here *
 
             if (!result)
             {
