@@ -11,13 +11,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ERP_API.Repositories
 {
-    public class CustomerRepository : BaseRepository<Customer, ErpDbContext>, ICustomerRepository
+    public class SupplierRepository : BaseRepository<Supplier, ErpDbContext>, ISupplierRepository
     {
-        public CustomerRepository(ErpDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext, unitOfWork)
+        public SupplierRepository(ErpDbContext dbContext, IUnitOfWork unitOfWork) : base(dbContext, unitOfWork)
         {
         }
 
-        public async Task<IEnumerable<CustomerModel>> GetListPaging(CustomerSearchModel search)
+        public async Task<IEnumerable<SupplierModel>> GetListPaging(SupplierSearchModel search)
         {
             if (search == null)
             {
@@ -25,23 +25,23 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT c.CustomerId, c.Name, c.Contact, c.Address FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT s.SupplierId, s.SupplierName, s.Contact, s.Address FROM Supplier s WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
-                query.Append(" AND (c.Name LIKE @keyword OR c.Contact LIKE @keyword OR c.Address LIKE @keyword) ");
+                query.Append(" AND (s.SupplierName LIKE @keyword OR s.Contact LIKE @keyword OR s.Address LIKE @keyword) ");
                 dynamicParameters.Add("keyword", "%" + search.Keyword + "%");
             }
 
-            query.Append(" ORDER BY c.CustomerId DESC ");
+            query.Append(" ORDER BY s.SupplierId DESC ");
             StringUtils.AddPaging(query, search.PageIndex, search.PageSize);
 
-            IEnumerable<CustomerModel> lstStudent = await DapperQueryAsync<CustomerModel>(query.ToString(), dynamicParameters);
+            IEnumerable<SupplierModel> lstStudent = await DapperQueryAsync<SupplierModel>(query.ToString(), dynamicParameters);
 
             return lstStudent;
         }
 
-        public async Task<int> GetTotalRecord(CustomerSearchModel search)
+        public async Task<int> GetTotalRecord(SupplierSearchModel search)
         {
             if (search == null)
             {
@@ -49,11 +49,11 @@ namespace ERP_API.Repositories
             }
 
             DynamicParameters dynamicParameters = new DynamicParameters();
-            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Customer c WHERE 1=1 ");
+            StringBuilder query = new StringBuilder(@"SELECT COUNT(1) FROM Supplier s WHERE 1=1 ");
 
             if (!string.IsNullOrEmpty(search.Keyword))
             {
-                query.Append(" AND (c.Name LIKE @keyword OR c.Contact LIKE @keyword OR c.Address LIKE @keyword) ");
+                query.Append(" AND (s.SupplierName LIKE @keyword OR s.Contact LIKE @keyword OR s.Address LIKE @keyword) ");
                 dynamicParameters.Add("keyword", "%" + search.Keyword + "%");
             }
 

@@ -16,6 +16,9 @@ namespace ApiWithRoles.Extensions
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+
+            services.AddTransient<ISupplierRepository, SupplierRepository>();
+            services.AddScoped<ISupplierService, SupplierService>();
         }
     }
 }
