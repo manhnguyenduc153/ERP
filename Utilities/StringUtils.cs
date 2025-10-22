@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text;
 
-namespace ApiWithRoles.Utilities
+namespace ERP_API.Utilities
 {
     public static class StringUtils
     {

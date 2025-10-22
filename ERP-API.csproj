@@ -20,4 +20,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Repositories\CategoryRepository.cs">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>

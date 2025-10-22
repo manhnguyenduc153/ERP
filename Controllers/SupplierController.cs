@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using ERP_API.Models;
 using ERP_API.Services.IServices;
 
-namespace ApiWithRoles.Controllers
+namespace ERP_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

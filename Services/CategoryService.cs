@@ -8,45 +8,45 @@ using Mapster;
 
 namespace ERP_API.Services
 {
-    public class CustomerService : ICustomerService
+    public class CategoryService : ICategoryService
     {
-        private readonly ICustomerRepository _CustomerRepository;
-        private readonly ILogger<CustomerService> _logger;
-        public CustomerService(ICustomerRepository CustomerRepository, ILogger<CustomerService> logger)
+        private readonly ICategoryRepository _CategoryRepository;
+        private readonly ILogger<CategoryService> _logger;
+        public CategoryService(ICategoryRepository CategoryRepository, ILogger<CategoryService> logger)
         {
-            _CustomerRepository = CustomerRepository;
+            _CategoryRepository = CategoryRepository;
             _logger = logger;
         }
 
-        public async Task<ResponseData<IEnumerable<CustomerModel>>> GetListPaging(CustomerSearchModel search)
+        public async Task<ResponseData<IEnumerable<CategoryModel>>> GetListPaging(CategorySearchModel search)
         {
             try
             {
-                var totalRecord = await _CustomerRepository.GetTotalRecord(search);
+                var totalRecord = await _CategoryRepository.GetTotalRecord(search);
                 if (totalRecord > 0)
                 {
-                    var list = await _CustomerRepository.GetListPaging(search);
-                    var pagedList = new PagedList<CustomerModel>(list, totalRecord, search.PageIndex, search.PageSize);
-                    return new ResponseData<IEnumerable<CustomerModel>>(true, pagedList, pagedList.GetMetaData());
+                    var list = await _CategoryRepository.GetListPaging(search);
+                    var pagedList = new PagedList<CategoryModel>(list, totalRecord, search.PageIndex, search.PageSize);
+                    return new ResponseData<IEnumerable<CategoryModel>>(true, pagedList, pagedList.GetMetaData());
                 }
-                return new ResponseData<IEnumerable<CustomerModel>>(true);
+                return new ResponseData<IEnumerable<CategoryModel>>(true);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new ResponseData<IEnumerable<CustomerModel>>(ex.Message);
+                return new ResponseData<IEnumerable<CategoryModel>>(ex.Message);
             }
         }
 
-        public async Task<ResponseData<object>> Insert(CustomerSaveModel model)
+        public async Task<ResponseData<object>> Insert(CategorySaveModel model)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(model.Name))
+                if (string.IsNullOrWhiteSpace(model.CategoryName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = model.Adapt<Customer>();
-                var result = await _CustomerRepository.AddAsync(entity);
+                var entity = model.Adapt<Category>();
+                var result = await _CategoryRepository.AddAsync(entity);
 
                 if (result != null)
                     return new ResponseData<object>(true, entity); // trả về entity vừa tạo
@@ -60,21 +60,21 @@ namespace ERP_API.Services
             }
         }
 
-        public async Task<ResponseData<object>> Update(CustomerSaveModel model)
+        public async Task<ResponseData<object>> Update(CategorySaveModel model)
         {
             try
             {
-                if (model.CustomerId <= 0 || string.IsNullOrWhiteSpace(model.Name))
+                if (model.CategoryId <= 0 || string.IsNullOrWhiteSpace(model.CategoryName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _CustomerRepository.GetByIdAsync(model.CustomerId);
+                var entity = await _CategoryRepository.GetByIdAsync(model.CategoryId);
                 if (entity == null)
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
 
                 var updateEntity = model.Adapt(entity);
-                await _CustomerRepository.UpdateAsync(updateEntity);
+                await _CategoryRepository.UpdateAsync(updateEntity);
 
-                var result = await _CustomerRepository.SaveChangesAsync();
+                var result = await _CategoryRepository.SaveChangesAsync();
 
                 return new ResponseData<object>(true, updateEntity);
             }
@@ -85,26 +85,26 @@ namespace ERP_API.Services
             }
         }
 
-        public async Task<ResponseData<CustomerModel>> GetById(int id)
+        public async Task<ResponseData<CategoryModel>> GetById(int id)
         {
             try
             {
                 if (id <= 0)
-                    return new ResponseData<CustomerModel>(ErrorCodeAPI.InvalidInput);
+                    return new ResponseData<CategoryModel>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _CustomerRepository.GetByIdAsync(id);
+                var entity = await _CategoryRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
-                    return new ResponseData<CustomerModel>(ErrorCodeAPI.NotFound);
+                    return new ResponseData<CategoryModel>(ErrorCodeAPI.NotFound);
                 }
 
-                var model = entity.Adapt<CustomerModel>();
-                return new ResponseData<CustomerModel>(true, model);
+                var model = entity.Adapt<CategoryModel>();
+                return new ResponseData<CategoryModel>(true, model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new ResponseData<CustomerModel>(ex.Message);
+                return new ResponseData<CategoryModel>(ex.Message);
             }
         }
 
@@ -115,13 +115,13 @@ namespace ERP_API.Services
                 if (id <= 0)
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = await _CustomerRepository.GetByIdAsync(id);
+                var entity = await _CategoryRepository.GetByIdAsync(id);
                 if (entity == null)
                 {
                     return new ResponseData<object>(ErrorCodeAPI.NotFound);
                 }
 
-                await _CustomerRepository.DeleteAsync(entity);
+                await _CategoryRepository.DeleteAsync(entity);
                 return new ResponseData<object>(true, entity);
             }
             catch (Exception ex)

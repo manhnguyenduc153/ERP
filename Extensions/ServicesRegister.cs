@@ -4,7 +4,7 @@ using ERP_API.Repositories.IRepositories;
 using ERP_API.Services;
 using ERP_API.Services.IServices;
 
-namespace ApiWithRoles.Extensions
+namespace ERP_API.Extensions
 {
     public static class ServicesRegister
     {
@@ -14,11 +14,17 @@ namespace ApiWithRoles.Extensions
 
             services.AddScoped<IUnitOfWork, UnitOfWork<ErpDbContext>>();
 
+            //Customer
             services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
 
+            //Supplier
             services.AddTransient<ISupplierRepository, SupplierRepository>();
             services.AddScoped<ISupplierService, SupplierService>();
+
+            //Category
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
     }
 }
