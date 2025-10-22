@@ -1,0 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ERP_API.Entities;
+
+namespace ERP_API.Repositories
+{
+    public interface IOrderRepository
+    {
+        Task<IEnumerable<SalesOrder>> GetAllOrdersAsync();
+        Task<SalesOrder?> GetOrderByIdAsync(int id);
+        Task<bool> CreateOrderAsync(SalesOrder order);
+        Task<bool> UpdateOrderAsync(SalesOrder order);
+        Task<bool> DeleteOrderAsync(SalesOrder order);
+    }
+}
