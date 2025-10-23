@@ -3,6 +3,7 @@ using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Services;
 using ERP_API.Services.IServices;
+using ERP_API.tRepositories;
 
 namespace ERP_API.Extensions
 {
@@ -33,6 +34,9 @@ namespace ERP_API.Extensions
             // Orders
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddTransient<IOrderService, OrderService>();
+
+            // Customers 2
+            services.AddScoped<tICustomerRepository, tCustomerRepository>();
         }
     }
 }

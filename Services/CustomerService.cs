@@ -5,6 +5,7 @@ using ERP_API.Models;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Services.IServices;
+using ERP_API.tRepositories;
 using Mapster;
 
 namespace ERP_API.Services
@@ -13,9 +14,12 @@ namespace ERP_API.Services
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<CustomerService> _logger;
-        public CustomerService(ICustomerRepository CustomerRepository, ILogger<CustomerService> logger)
+        private readonly tICustomerRepository _customerRepository2;
+
+        public CustomerService(ICustomerRepository CustomerRepository, tICustomerRepository customerRepository2, ILogger<CustomerService> logger)
         {
             _customerRepository = CustomerRepository;
+            _customerRepository2 = customerRepository2;
             _logger = logger;
         }
 
@@ -56,7 +60,7 @@ namespace ERP_API.Services
                 {
                     return new ResponseData<object>(true, entity);
                 }
-                    
+
                 return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
             catch (Exception ex)
@@ -82,7 +86,7 @@ namespace ERP_API.Services
 
                 var result = await _customerRepository.SaveChangesAsync();
 
-                if(result > 0)
+                if (result > 0)
                 {
                     return new ResponseData<object>(true, updateEntity);
                 }
@@ -146,6 +150,11 @@ namespace ERP_API.Services
                 _logger.LogError(ex, ex.Message);
                 return new ResponseData<object>(ex.Message);
             }
+        }
+
+        public async Task<bool> CreateCustomerAsync(Customer customer)
+        {
+            return await _customerRepository2.CreateAsync(customer);
         }
     }
 }
