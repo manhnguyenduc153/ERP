@@ -41,24 +41,27 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<ErpDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddControllers()
-.AddNewtonsoftJson(options =>
- options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "ERPAuthCookie";       // tên custom
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.ExpireTimeSpan = TimeSpan.FromHours(3);
+    options.SlidingExpiration = true;
 
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
+});
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-   .AddCookie(options =>
-   {
-       options.LoginPath = "/auth/login";           // đường dẫn khi chưa đăng nhập
-       options.LogoutPath = "/auth/logout";         // đường dẫn đăng xuất
-       options.AccessDeniedPath = "/auth/denied";   // khi không có quyền truy cập
-       options.Cookie.Name = "ERPAuthCookie";       // tên cookie
-       options.Cookie.HttpOnly = true;              // bảo mật cookie
-       options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // chỉ dùng HTTPS
-       options.Cookie.SameSite = SameSiteMode.None; // cho phép từ frontend khác domain (nếu SPA)
-       options.ExpireTimeSpan = TimeSpan.FromHours(3);          // thời gian sống
-       options.SlidingExpiration = true;           // tự reset thời gian khi có hoạt động
-   });
 
 builder.Services.AddAuthorization();
 
