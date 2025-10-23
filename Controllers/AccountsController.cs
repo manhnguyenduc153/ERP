@@ -11,11 +11,13 @@ namespace ERP_API.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountsController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AccountsController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
         // Đăng ký tài khoản mới
@@ -33,17 +35,17 @@ namespace ERP_API.Controllers
             return BadRequest(result.Errors);
         }
 
-        // Đăng nhập không dùng JWT
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] Login model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                // Nếu muốn trả thêm thông tin role:
-                var roles = await _userManager.GetRolesAsync(user);
+                //Tạo cookie authentication
+                await _signInManager.SignInAsync(user, isPersistent: true);
 
+                //Role infor
+                var roles = await _userManager.GetRolesAsync(user);
                 return Ok(new
                 {
                     message = "Login successfully!",
@@ -52,6 +54,13 @@ namespace ERP_API.Controllers
                 });
             }
             return Unauthorized(new { message = "Invalid username or password!" });
+        }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Logout successfully!" });
         }
 
         // Thêm role
@@ -93,5 +102,24 @@ namespace ERP_API.Controllers
 
             return BadRequest(result.Errors);
         }
+
+        [HttpGet("CurrentUser")]
+        public async Task<IActionResult> CurrentUser()
+        {
+            if (User?.Identity == null || !User.Identity.IsAuthenticated)
+                return Unauthorized(new { message = "Not authenticated" });
+
+            var username = User.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(username);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                username = username,
+                roles = roles
+            });
+        }
+
     }
 }
