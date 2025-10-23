@@ -37,6 +37,11 @@ namespace ERP_API.Extensions
 
             // Customers 2
             services.AddScoped<tICustomerRepository, tCustomerRepository>();
+
+            // Products
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductService, ProductService>();
+
         }
     }
 }
