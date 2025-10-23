@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP_API.DTOS.Order;
+using ERP_API.Entities;
 using ERP_API.Repositories;
 using ERP_API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace ERP_API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _service;
+        private readonly ICustomerService _customerService;
 
-        public OrdersController(IOrderService service)
+        public OrdersController(IOrderService service, ICustomerService customerService)
         {
             _service = service;
+            _customerService = customerService;
         }
 
 
@@ -46,11 +49,28 @@ namespace ERP_API.Controllers
         {
             // Solve more cases and validations as needed *
 
-            // Case 1: Customer already exists
             var orderEntity = Mappers.OrderMapper.ToCreateEntity(createOrderDTO);
-            var result = await _service.CreateOrderAsync(orderEntity);
 
-            // Case 2: New Customer creation logic can be added here *
+            // New customer validation
+            if (createOrderDTO.CustomerId <= 0)
+            {
+                var customer = new Customer
+                {
+                    Name = createOrderDTO.Name,
+                    Contact = createOrderDTO.Contact,
+                    Address = createOrderDTO.Address
+                };
+
+                var isCreated = await _customerService.CreateCustomerAsync(customer);
+
+                if (!isCreated)
+                {
+                    return BadRequest("Failed to create customer.");
+                }
+                orderEntity.CustomerId = customer.CustomerId;
+            }
+
+            var result = await _service.CreateOrderAsync(orderEntity);
 
             if (!result)
             {
