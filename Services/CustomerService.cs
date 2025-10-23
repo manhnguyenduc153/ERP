@@ -12,11 +12,11 @@ namespace ERP_API.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly ICustomerRepository _customerRepository;
+        private readonly Repositories.IRepositories.ICustomerRepository _customerRepository;
         private readonly ILogger<CustomerService> _logger;
         private readonly tICustomerRepository _customerRepository2;
 
-        public CustomerService(ICustomerRepository CustomerRepository, tICustomerRepository customerRepository2, ILogger<CustomerService> logger)
+        public CustomerService(Repositories.IRepositories.ICustomerRepository CustomerRepository, tICustomerRepository customerRepository2, ILogger<CustomerService> logger)
         {
             _customerRepository = CustomerRepository;
             _customerRepository2 = customerRepository2;
@@ -155,6 +155,11 @@ namespace ERP_API.Services
         public async Task<bool> CreateCustomerAsync(Customer customer)
         {
             return await _customerRepository2.CreateAsync(customer);
+        }
+
+        public async Task<List<Customer>> GetAllCustomersAsync()
+        {
+            return await _customerRepository2.GetAllAsync();
         }
     }
 }

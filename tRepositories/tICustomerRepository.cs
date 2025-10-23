@@ -8,6 +8,8 @@ namespace ERP_API.tRepositories
 {
     public interface tICustomerRepository
     {
+        Task<List<Customer>> GetAllAsync();
+
         Task<bool> CreateAsync(Customer entity);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP_API.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ERP_API.tRepositories
 {
@@ -19,6 +20,11 @@ namespace ERP_API.tRepositories
         {
             await _dbContext.Customers.AddAsync(entity);
             return await _dbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<Customer>> GetAllAsync()
+        {
+            return await _dbContext.Customers.ToListAsync();
         }
     }
 }

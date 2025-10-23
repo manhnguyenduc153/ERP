@@ -16,7 +16,7 @@ namespace ERP_API.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork<ErpDbContext>>();
 
             //Customer
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<Repositories.IRepositories.ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
 
             //Supplier

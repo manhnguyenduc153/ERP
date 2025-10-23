@@ -11,5 +11,7 @@ namespace ERP_API.Services.IServices
         Task<ResponseData<object>> Update(CustomerSaveModel model);
         Task<ResponseData<object>> Delete(int id);
         Task<bool> CreateCustomerAsync(Customer customer);
+
+        Task<List<Customer>> GetAllCustomersAsync();
     }
 }

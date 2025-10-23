@@ -57,5 +57,12 @@ namespace ERP_API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("v2")]
+        public  async Task<IActionResult> GetAllCustomers()
+        {
+            var customers = await _customerService.GetAllCustomersAsync();
+            return Ok(customers);
+        }
     }
 }
