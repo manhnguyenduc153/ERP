@@ -24,5 +24,26 @@ namespace ERP_API.Mappers
 
             return salesOrder;
         }
+
+        public static OrderDTO ToDto(this SalesOrder salesOrder)
+        {
+            var orderDto = new OrderDTO
+            {
+                OrderId = salesOrder.SalesOrderId,
+                OrderDate = salesOrder.OrderDate,
+                CustomerId = salesOrder.Customer!.CustomerId,
+                CustomerName = salesOrder.Customer?.Name ?? string.Empty,
+                Contact = salesOrder.Customer?.Contact ?? string.Empty,
+                OrderDetails = salesOrder.SalesOrderDetails.Select(sod => new OrderDetailDTO
+                {
+                    DetailId = sod.DetailId,
+                    ProductId = sod.ProductId ?? 0,
+                    ProductName = sod.Product?.ProductName ?? string.Empty,
+                    Quantity = sod.Quantity ?? 0,
+                    UnitPrice = sod.UnitPrice ?? 0m
+                }).ToList()
+            };
+            return orderDto;
+        }
     }
 }

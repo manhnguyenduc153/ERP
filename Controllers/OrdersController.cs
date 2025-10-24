@@ -29,7 +29,9 @@ namespace ERP_API.Controllers
         {
             var orders = await _service.GetAllOrdersAsync();
 
-            return Ok(orders);
+            var ordersDto = orders.Select(o => Mappers.OrderMapper.ToDto(o)).ToList();
+
+            return Ok(ordersDto);
         }
 
         [HttpGet("{id}")]
@@ -41,7 +43,9 @@ namespace ERP_API.Controllers
                 return NotFound();
             }
 
-            return Ok(order);
+            var orderDto = Mappers.OrderMapper.ToDto(order);
+
+            return Ok(orderDto);
         }
 
         [HttpPost]
