@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ERP_API.Entities;
 
-namespace ERP_API.tRepositories
+namespace ERP_API.Repositories.tRepositories
 {
     public interface tICustomerRepository
     {

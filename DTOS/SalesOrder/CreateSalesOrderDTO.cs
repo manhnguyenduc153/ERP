@@ -7,7 +7,7 @@ using Humanizer;
 
 namespace ERP_API.DTOS.Order
 {
-    public class CreateOrderDTO
+    public class CreateSalesOrderDTO
     {
         public int CustomerId { get; set; }
 
@@ -17,6 +17,6 @@ namespace ERP_API.DTOS.Order
 
         public string Address { get; set; } = string.Empty;
 
-        public List<CreateOrderDetailDTO> OrderDetails { get; set; } = new List<CreateOrderDetailDTO>();
+        public List<SalesOrderDetailDTO> OrderDetails { get; set; } = new List<SalesOrderDetailDTO>();
     }
 }

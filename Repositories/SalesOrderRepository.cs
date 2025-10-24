@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERP_API.Repositories
 {
-    public class OrderRepository : IOrderRepository
+    public class SalesOrderRepository : ISalesOrderRepository
     {
         private readonly ErpDbContext _dbContext;
 
-        public OrderRepository(ErpDbContext dbContext)
+        public SalesOrderRepository(ErpDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -4,6 +4,7 @@ using ERP_API.Models;
 using ERP_API.Models;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
+using ERP_API.Repositories.tRepositories;
 using ERP_API.Services.IServices;
 using Mapster;
 
@@ -12,10 +13,12 @@ namespace ERP_API.Services
     public class SupplierService : ISupplierService
     {
         private readonly ISupplierRepository _supplierRepository;
+        private readonly tISupplierRepository _supplierRepository2;
         private readonly ILogger<SupplierService> _logger;
-        public SupplierService(ISupplierRepository SupplierRepository, ILogger<SupplierService> logger)
+        public SupplierService(ISupplierRepository SupplierRepository, tISupplierRepository supplierRepository2, ILogger<SupplierService> logger)
         {
             _supplierRepository = SupplierRepository;
+            _supplierRepository2 = supplierRepository2;
             _logger = logger;
         }
 
@@ -146,6 +149,21 @@ namespace ERP_API.Services
                 _logger.LogError(ex, ex.Message);
                 return new ResponseData<object>(ex.Message);
             }
+        }
+
+        public async Task<List<Supplier>> GetSuppliersAsync()
+        {
+            return await _supplierRepository2.GetListAysnc();
+        }
+
+        public async Task<bool> CreateSupplierAsync(Supplier supplier)
+        {
+            return await _supplierRepository2.CreateAsync(supplier);
+        }
+
+        public async Task<bool> CreareSupplierAsync(Supplier supplier)
+        {
+            return await _supplierRepository2.CreateAsync(supplier);
         }
     }
 }

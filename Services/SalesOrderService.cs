@@ -8,11 +8,11 @@ using ERP_API.Services.IServices;
 
 namespace ERP_API.Services
 {
-    public class OrderService : IOrderService
+    public class SalesOrderService : ISalesOrderService
     {
-        private readonly IOrderRepository _repository;
+        private readonly ISalesOrderRepository _repository;
 
-        public OrderService(IOrderRepository repository)
+        public SalesOrderService(ISalesOrderRepository repository)
         {
             _repository = repository;
         }
