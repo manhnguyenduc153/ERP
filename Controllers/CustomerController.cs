@@ -6,7 +6,7 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/customers")]
     public class CustomerController : ControllerBase
     {
