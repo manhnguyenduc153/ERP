@@ -46,8 +46,6 @@ namespace ERP_API.Controllers
 
             if (orderDto.SupplierId <= 0)
             {
-                // Handle new supplier creation logic here
-                // For example, create a new Supplier entity and assign it to purchaseOrder.Supplier
                 Supplier supplier = new Supplier
                 {
                     SupplierName = orderDto.SupplierName,

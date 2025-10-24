@@ -12,5 +12,7 @@ namespace ERP_API.Repositories.IRepositories
         Task UpdateAsync(Category entity);
         Task DeleteAsync(Category entity);
         Task<int> SaveChangesAsync();
+
+        Task<List<Category>> GetCategoriesAsync();
     }
 }

@@ -148,5 +148,9 @@ namespace ERP_API.Services
             }
         }
 
+        public async Task<List<Category>> GetCategoriesAsync()
+        {
+            return await _categoryRepository.GetCategoriesAsync();
+        }
     }
 }

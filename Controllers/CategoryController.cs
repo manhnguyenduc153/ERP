@@ -58,5 +58,13 @@ namespace ERP_API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("v2")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _categoryService.GetCategoriesAsync();
+            return Ok(result);
+        }
     }
 }
