@@ -1,11 +1,10 @@
 ﻿using ERP_API.Entities;
 using ERP_API.Enums;
 using ERP_API.Models;
-using ERP_API.Models;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
+using ERP_API.Repositories.tRepositories;
 using ERP_API.Services.IServices;
-using ERP_API.tRepositories;
 using Mapster;
 
 namespace ERP_API.Services

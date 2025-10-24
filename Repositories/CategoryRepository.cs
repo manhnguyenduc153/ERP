@@ -17,6 +17,11 @@ namespace ERP_API.Repositories
         {
         }
 
+        public async Task<List<Category>> GetCategoriesAsync()
+        {
+            return await _dbContext.Categories.ToListAsync();
+        }
+
         public async Task<IEnumerable<CategoryModel>> GetListPaging(CategorySearchModel search)
         {
             if (search == null)

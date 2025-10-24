@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ERP_API.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ERP_API.tRepositories
+namespace ERP_API.Repositories.tRepositories
 {
     public class tCustomerRepository : tICustomerRepository
     {

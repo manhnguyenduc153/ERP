@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERP_API.Repositories
 {
-    public class OrderRepository : IOrderRepository
+    public class SalesOrderRepository : ISalesOrderRepository
     {
         private readonly ErpDbContext _dbContext;
 
-        public OrderRepository(ErpDbContext dbContext)
+        public SalesOrderRepository(ErpDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -30,12 +30,20 @@ namespace ERP_API.Repositories
 
         public async Task<IEnumerable<SalesOrder>> GetAllOrdersAsync()
         {
-            return await _dbContext.SalesOrders.ToListAsync();
+            return await _dbContext.SalesOrders
+                    .Include(o => o.Customer)
+                    .Include(o => o.SalesOrderDetails)
+                    .ThenInclude(od => od.Product)
+                .ToListAsync();
         }
 
         public async Task<SalesOrder?> GetOrderByIdAsync(int id)
         {
-            return await _dbContext.SalesOrders.FirstOrDefaultAsync(o => o.SalesOrderId == id);
+            return await _dbContext.SalesOrders
+                .Include(o => o.Customer)
+                .Include(o => o.SalesOrderDetails)
+                .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.SalesOrderId == id);
         }
 
         // Consider update order?

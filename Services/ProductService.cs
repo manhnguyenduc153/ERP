@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP_API.Entities;
+using ERP_API.Repositories.tRepositories;
 using ERP_API.Services.IServices;
-using ERP_API.tRepositories;
 
 namespace ERP_API.Services
 {

@@ -1,9 +1,9 @@
 ﻿using ERP_API.Entities;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
+using ERP_API.Repositories.tRepositories;
 using ERP_API.Services;
 using ERP_API.Services.IServices;
-using ERP_API.tRepositories;
 
 namespace ERP_API.Extensions
 {
@@ -27,7 +27,7 @@ namespace ERP_API.Extensions
             services.AddScoped<ICustomerService, CustomerService>();
 
             //Supplier
-            services.AddTransient<ISupplierRepository, SupplierRepository>();
+            services.AddTransient<ISupplierRepository, Repositories.SupplierRepository>();
             services.AddScoped<ISupplierService, SupplierService>();
 
             //Category
@@ -38,16 +38,25 @@ namespace ERP_API.Extensions
             services.AddTransient<IWarehouseRepository, WarehouseRepository>();
             services.AddScoped<IWarehouseService, WarehouseService>();
 
-            // Orders
-            services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddTransient<IOrderService, OrderService>();
+            // Sale Orders
+            services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
+            services.AddTransient<ISalesOrderService, SalesOrderService>();
+
+            // Purchase Orders
+            services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+            services.AddTransient<IPurchaseOrderService, PurchaseOrderService>();
 
             // Customers 2
             services.AddScoped<tICustomerRepository, tCustomerRepository>();
 
+            // Supplier 2
+            services.AddScoped<tISupplierRepository, tSupplierRepository>();
+
             // Products
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddTransient<IProductService, ProductService>();
+
+
 
         }
     }
