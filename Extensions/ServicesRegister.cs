@@ -49,7 +49,8 @@ namespace ERP_API.Extensions
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddTransient<IProductService, ProductService>();
 
-
+            services.AddTransient<IWarehouseReportRepository, WarehouseReportRepository>();
+            services.AddScoped<IWarehouseReportService, WarehouseReportService>();
 
         }
     }
