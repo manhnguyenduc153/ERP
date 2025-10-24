@@ -15,6 +15,13 @@ namespace ERP_API.Extensions
 
             services.AddScoped<IUnitOfWork, UnitOfWork<ErpDbContext>>();
 
+            //Account
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddScoped<IAccountService, AccountService>();
+
+            //Role
+            services.AddScoped<IRoleService, RoleService>();
+
             //Customer
             services.AddTransient<Repositories.IRepositories.ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
