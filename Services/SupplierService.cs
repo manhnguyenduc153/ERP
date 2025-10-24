@@ -85,7 +85,7 @@ namespace ERP_API.Services
 
                 var result = await _supplierRepository.SaveChangesAsync();
 
-                if(result > 0)
+                if (result > 0)
                 {
                     return new ResponseData<object>(true, updateEntity);
                 }
@@ -153,7 +153,7 @@ namespace ERP_API.Services
 
         public async Task<List<Supplier>> GetSuppliersAsync()
         {
-            return await _supplierRepository2.GetListAysnc();
+            return await _supplierRepository2.GetListAsync();
         }
 
         public async Task<bool> CreateSupplierAsync(Supplier supplier)
@@ -161,9 +161,9 @@ namespace ERP_API.Services
             return await _supplierRepository2.CreateAsync(supplier);
         }
 
-        public async Task<bool> CreareSupplierAsync(Supplier supplier)
+        public async Task<List<Supplier>> GetAllSuppliersAsync()
         {
-            return await _supplierRepository2.CreateAsync(supplier);
+            return await _supplierRepository2.GetListAsync();
         }
     }
 }

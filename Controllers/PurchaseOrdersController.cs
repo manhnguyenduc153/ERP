@@ -53,7 +53,7 @@ namespace ERP_API.Controllers
                     SupplierName = orderDto.SupplierName,
                     Contact = orderDto.Contact
                 };
-                var rs = await _supplierService.CreareSupplierAsync(supplier);
+                var rs = await _supplierService.CreateSupplierAsync(supplier);
                 if (!rs)
                 {
                     return BadRequest("Failed to create supplier.");

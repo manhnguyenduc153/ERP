@@ -10,6 +10,7 @@ namespace ERP_API.Services.IServices
         Task<ResponseData<object>> Insert(SupplierSaveModel model);
         Task<ResponseData<object>> Update(SupplierSaveModel model);
         Task<ResponseData<object>> Delete(int id);
-        Task<bool> CreareSupplierAsync(Supplier supplier);
+        Task<bool> CreateSupplierAsync(Supplier supplier);
+        Task<List<Supplier>> GetAllSuppliersAsync();
     }
 }

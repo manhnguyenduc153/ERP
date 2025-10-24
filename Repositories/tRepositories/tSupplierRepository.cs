@@ -18,7 +18,7 @@ namespace ERP_API.Repositories.tRepositories
             return _dbContext.SaveChanges() > 0;
         }
 
-        public async Task<List<Supplier>> GetListAysnc()
+        public async Task<List<Supplier>> GetListAsync()
         {
             return await _dbContext.Suppliers.ToListAsync();
         }

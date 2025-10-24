@@ -58,5 +58,13 @@ namespace ERP_API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("v2")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllSuppliers()
+        {
+            var result = await _supplierService.GetAllSuppliersAsync();
+            return Ok(result);
+        }
     }
 }
