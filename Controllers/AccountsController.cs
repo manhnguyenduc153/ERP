@@ -34,10 +34,12 @@ public class AccountsController : ControllerBase
     }
 
     [HttpGet("GetUsersWithRoles")]
-    public async Task<IActionResult> GetUsersWithRoles()
+    public async Task<IActionResult> GetUsersWithRoles([FromQuery] AccountSearchModel search)
     {
-        var data = await _accountService.GetUsersWithRolesAsync();
-        return Ok(new { data, message = "Get users with roles successfully!", success = true, statusCode = 200 });
+        //var data = await _accountService.GetUsersWithRolesAsync();
+        //return Ok(new { data, message = "Get users with roles successfully!", success = true, statusCode = 200 });
+        var result = await _accountService.GetListPaging(search);
+        return Ok(result);
     }
 
     [HttpPost("Logout")]

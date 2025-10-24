@@ -6,6 +6,7 @@ namespace ERP_API.Services.IServices
 {
     public interface IAccountService
     {
+        Task<ResponseData<IEnumerable<AccountModel>>> GetListPaging(AccountSearchModel search);
         Task<(bool Success, IEnumerable<IdentityError>? Errors)> RegisterAsync(Register model);
         Task<(bool Success, AppUser? User, IEnumerable<string>? Roles)> LoginAsync(Login model);
         Task<IEnumerable<object>> GetUsersWithRolesAsync();

@@ -1,5 +1,6 @@
 ﻿using ERP_API.Entities;
 using ERP_API.Models;
+using ERP_API.Repositories.IRepositories;
 using ERP_API.Services.IServices;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,12 +11,16 @@ namespace ERP_API.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ILogger<AccountService> _logger;
 
-        public AccountService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
+        public AccountService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, IAccountRepository accountRepository, ILogger<AccountService> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _accountRepository = accountRepository;
+            _logger = logger;
         }
 
         public async Task<(bool Success, IEnumerable<IdentityError>? Errors)> RegisterAsync(Register model)
@@ -138,6 +143,26 @@ namespace ERP_API.Services
 
             var result = await _userManager.DeleteAsync(user);
             return (result.Succeeded, result.Errors);
+        }
+
+        public async Task<ResponseData<IEnumerable<AccountModel>>> GetListPaging(AccountSearchModel search)
+        {
+            try
+            {
+                var totalRecord = await _accountRepository.GetTotalRecord(search);
+                if (totalRecord > 0)
+                {
+                    var list = await _accountRepository.GetListPaging(search);
+                    var pagedList = new PagedList<AccountModel>(list, totalRecord, search.PageIndex, search.PageSize);
+                    return new ResponseData<IEnumerable<AccountModel>>(true, pagedList, pagedList.GetMetaData());
+                }
+                return new ResponseData<IEnumerable<AccountModel>>(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new ResponseData<IEnumerable<AccountModel>>(ex.Message);
+            }
         }
     }
 }
