@@ -7,9 +7,9 @@ using ERP_API.Entities;
 
 namespace ERP_API.Mappers
 {
-    public static class OrderMapper
+    public static class SalesOrderMapper
     {
-        public static SalesOrder ToCreateEntity(this CreateOrderDTO createOrderDTO)
+        public static SalesOrder ToCreateEntity(this CreateSalesOrderDTO createOrderDTO)
         {
             var salesOrder = new SalesOrder
             {

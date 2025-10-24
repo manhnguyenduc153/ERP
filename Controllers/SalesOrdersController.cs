@@ -12,12 +12,12 @@ namespace ERP_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrdersController : ControllerBase
+    public class SalesOrdersController : ControllerBase
     {
-        private readonly IOrderService _service;
+        private readonly ISalesOrderService _service;
         private readonly ICustomerService _customerService;
 
-        public OrdersController(IOrderService service, ICustomerService customerService)
+        public SalesOrdersController(ISalesOrderService service, ICustomerService customerService)
         {
             _service = service;
             _customerService = customerService;
@@ -29,7 +29,7 @@ namespace ERP_API.Controllers
         {
             var orders = await _service.GetAllOrdersAsync();
 
-            var ordersDto = orders.Select(o => Mappers.OrderMapper.ToDto(o)).ToList();
+            var ordersDto = orders.Select(o => Mappers.SalesOrderMapper.ToDto(o)).ToList();
 
             return Ok(ordersDto);
         }
@@ -43,17 +43,15 @@ namespace ERP_API.Controllers
                 return NotFound();
             }
 
-            var orderDto = Mappers.OrderMapper.ToDto(order);
+            var orderDto = Mappers.SalesOrderMapper.ToDto(order);
 
             return Ok(orderDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO createOrderDTO)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateSalesOrderDTO createOrderDTO)
         {
-            // Solve more cases and validations as needed *
-
-            var orderEntity = Mappers.OrderMapper.ToCreateEntity(createOrderDTO);
+            var orderEntity = Mappers.SalesOrderMapper.ToCreateEntity(createOrderDTO);
 
             // New customer validation
             if (createOrderDTO.CustomerId <= 0)

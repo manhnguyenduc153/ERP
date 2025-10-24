@@ -1,7 +1,7 @@
 
 namespace ERP_API.DTOS.Order
 {
-    public class CreateOrderDetailDTO
+    public class SalesOrderDetailDTO
     {
         public int ProductId { get; set; }
         public int Quantity { get; set; }

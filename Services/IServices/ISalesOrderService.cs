@@ -7,7 +7,7 @@ using ERP_API.Repositories;
 
 namespace ERP_API.Services.IServices
 {
-    public interface IOrderService
+    public interface ISalesOrderService
     {
         Task<IEnumerable<SalesOrder>> GetAllOrdersAsync();
         Task<SalesOrder?> GetOrderByIdAsync(int id);

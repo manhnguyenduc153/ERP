@@ -6,8 +6,7 @@ using ERP_API.Entities;
 
 namespace ERP_API.Repositories
 {
-    public interface IOrderRepository
-    {
+    public interface ISalesOrderRepository    {
         Task<IEnumerable<SalesOrder>> GetAllOrdersAsync();
         Task<SalesOrder?> GetOrderByIdAsync(int id);
         Task<bool> CreateOrderAsync(SalesOrder order);
