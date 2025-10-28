@@ -33,6 +33,8 @@ public partial class ErpDbContext : IdentityDbContext<AppUser>
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
+    
+    public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     { }
@@ -201,6 +203,30 @@ public partial class ErpDbContext : IdentityDbContext<AppUser>
             entity.Property(e => e.WarehouseId).HasColumnName("WarehouseID");
             entity.Property(e => e.Location).HasMaxLength(255);
             entity.Property(e => e.WarehouseName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__AuditLog__3213E83F");
+
+            entity.ToTable("AuditLog");
+
+            entity.Property(e => e.Id).HasColumnName("Id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.Action).HasMaxLength(100);
+            entity.Property(e => e.EntityType).HasMaxLength(200);
+            entity.Property(e => e.EntityId).HasMaxLength(100);
+
+            // store JSON/text columns without length limits
+            entity.Property(e => e.Old).HasColumnType("longtext");
+            entity.Property(e => e.New).HasColumnType("longtext");
+            entity.Property(e => e.Changes).HasColumnType("longtext");
+            entity.Property(e => e.UserRoles).HasColumnType("longtext");
+            entity.Property(e => e.UserId).HasMaxLength(200);
+            entity.Property(e => e.UserName).HasMaxLength(200);
         });
 
         OnModelCreatingPartial(modelBuilder);
