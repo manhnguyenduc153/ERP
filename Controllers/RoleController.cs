@@ -1,6 +1,9 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Authorization;
+using ERP_API.Entities;
+using ERP_API.Enums;
 using ERP_API.Models;
 using ERP_API.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +15,14 @@ namespace ERP_API.Controllers
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public RoleController(IRoleService roleService)
+        public RoleController(IRoleService roleService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _roleService = roleService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -66,18 +73,25 @@ namespace ERP_API.Controllers
         [HttpPost("assign")]
         public async Task<IActionResult> AssignRole([FromBody] UserRole model)
         {
-            var (Succeeded, Message, User, Roles) = await _roleService.AssignRolesAsync(model.Username, model.Roles);
+            var (Succeeded, Message, UpdatedUser, Roles) = await _roleService.AssignRolesAsync(model.Username, model.Roles);
 
             if (!Succeeded)
                 return BadRequest(new { data = (object?)null, message = Message, success = false, statusCode = 400 });
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null && currentUser.UserName == model.Username)
+            {
+                await _userManager.UpdateSecurityStampAsync(currentUser);
+                await _signInManager.RefreshSignInAsync(currentUser);
+            }
 
             return Ok(new
             {
                 data = new
                 {
-                    userName = User.UserName,
-                    email = User.Email,
-                    phoneNumber = User.PhoneNumber,
+                    userName = UpdatedUser.UserName,
+                    email = UpdatedUser.Email,
+                    phoneNumber = UpdatedUser.PhoneNumber,
                     roles = Roles
                 },
                 message = Message,
@@ -85,5 +99,60 @@ namespace ERP_API.Controllers
                 statusCode = 200
             });
         }
+
+        [HttpPost("assign-permissions")]
+        public async Task<IActionResult> AssignPermissions([FromBody] RolePermissionModel model)
+        {
+            var result = await _roleService.AssignPermissionsToRoleAsync(model.RoleName, model.Permissions);
+
+            if (!result.Succeeded)
+                return BadRequest(new { message = result.Message, success = false, statusCode = 400 });
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null && await _userManager.IsInRoleAsync(currentUser, model.RoleName))
+            {
+                await _userManager.UpdateSecurityStampAsync(currentUser);
+                await _signInManager.RefreshSignInAsync(currentUser);
+            }
+
+
+            return Ok(new { message = result.Message, success = true, statusCode = 200 });
+        }
+
+        [HttpGet("permissions")]
+        public IActionResult GetAllPermissions()
+        {
+            var permissions = _roleService.GetAllPermissions();
+            return Ok(new
+            {
+                data = permissions,
+                message = "Get all permissions successfully!",
+                success = true,
+                statusCode = 200
+            });
+        }
+
+        [HttpGet("{roleName}/permissions")]
+        public async Task<IActionResult> GetPermissionsByRole(string roleName)
+        {
+            var permissions = await _roleService.GetPermissionsByRoleAsync(roleName);
+            if (permissions == null)
+                return NotFound(new
+                {
+                    data = (object?)null,
+                    message = "Role not found!",
+                    success = false,
+                    statusCode = 404
+                });
+
+            return Ok(new
+            {
+                data = permissions,
+                message = "Get role permissions successfully!",
+                success = true,
+                statusCode = 200
+            });
+        }
+
     }
 }

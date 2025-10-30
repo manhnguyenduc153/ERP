@@ -8,7 +8,7 @@ namespace ERP_API.Services.IServices
     {
         Task<ResponseData<IEnumerable<AccountModel>>> GetListPaging(AccountSearchModel search);
         Task<(bool Success, IEnumerable<IdentityError>? Errors)> RegisterAsync(Register model);
-        Task<(bool Success, AppUser? User, IEnumerable<string>? Roles)> LoginAsync(Login model);
+        Task<(bool Success, AppUser? User, IEnumerable<string>? Roles, IEnumerable<string>? Permissions)> LoginAsync(Login model);
         Task<IEnumerable<object>> GetUsersWithRolesAsync();
         Task LogoutAsync();
         Task<(bool Success, IEnumerable<IdentityError>? Errors)> AddRoleAsync(string role);

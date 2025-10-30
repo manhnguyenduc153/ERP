@@ -36,16 +36,18 @@ namespace ERP_API.Services
             return (result.Succeeded, result.Errors);
         }
 
-        public async Task<(bool Success, AppUser? User, IEnumerable<string>? Roles)> LoginAsync(Login model)
+        public async Task<(bool Success, AppUser? User, IEnumerable<string>? Roles, IEnumerable<string>? Permissions)> LoginAsync(Login model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 await _signInManager.SignInAsync(user, isPersistent: true);
                 var roles = await _userManager.GetRolesAsync(user);
-                return (true, user, roles);
+                var permissions = await GetPermissionsByRolesAsync(roles);
+                return (true, user, roles, permissions);
             }
-            return (false, null, null);
+
+            return (false, null, null, null);
         }
 
         public async Task<IEnumerable<object>> GetUsersWithRolesAsync()
@@ -163,6 +165,27 @@ namespace ERP_API.Services
                 _logger.LogError(ex, ex.Message);
                 return new ResponseData<IEnumerable<AccountModel>>(ex.Message);
             }
+        }
+
+        private async Task<List<string>> GetPermissionsByRolesAsync(IEnumerable<string> roles)
+        {
+            var permissions = new List<string>();
+
+            foreach (var roleName in roles)
+            {
+                var role = await _roleManager.FindByNameAsync(roleName);
+                if (role != null)
+                {
+                    var claims = await _roleManager.GetClaimsAsync(role);
+                    var rolePermissions = claims
+                        .Where(c => c.Type == "Permission") // Lấy claim kiểu "Permission"
+                        .Select(c => c.Value);
+
+                    permissions.AddRange(rolePermissions);
+                }
+            }
+
+            return permissions.Distinct().ToList();
         }
     }
 }
