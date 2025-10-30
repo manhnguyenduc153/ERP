@@ -1,7 +1,10 @@
 ﻿using ERP_API.Entities;
+using ERP_API.Enums;
+using ERP_API.Helpers;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ERP_API.Services
@@ -74,6 +77,61 @@ namespace ERP_API.Services
 
             var updatedRoles = await _userManager.GetRolesAsync(user);
             return (true, "Roles updated successfully", user, updatedRoles);
+        }
+
+        public async Task<(bool Succeeded, string Message)> AssignPermissionsToRoleAsync(string roleName, List<Permission> permissions)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+                return (false, "Role not found!");
+
+            var existingClaims = await _roleManager.GetClaimsAsync(role);
+
+            // Xóa các claim Permission cũ
+            foreach (var claim in existingClaims.Where(c => c.Type == "Permission"))
+            {
+                await _roleManager.RemoveClaimAsync(role, claim);
+            }
+
+            // Thêm các Permission mới
+            foreach (var permission in permissions)
+            {
+                var claim = new Claim("Permission", permission.ToString());
+                await _roleManager.AddClaimAsync(role, claim);
+            }
+
+            return (true, "Permissions assigned successfully!");
+        }
+
+        public List<object> GetAllPermissions()
+        {
+            return System.Enum.GetValues(typeof(Permission))
+                .Cast<Permission>()
+                .Select(p => new
+                {
+                    Name = p.ToString(),
+                    Description = p.GetDescription()
+                })
+                .ToList<object>();
+        }
+
+        // 🧩 Lấy Permission của 1 Role cụ thể
+        public async Task<List<object>> GetPermissionsByRoleAsync(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+                return null;
+
+            var claims = await _roleManager.GetClaimsAsync(role);
+
+            return claims
+                .Where(c => c.Type == "Permission")
+                .Select(c => new
+                {
+                    Name = c.Value,
+                    Description = ((Permission)System.Enum.Parse(typeof(Permission), c.Value)).GetDescription()
+                })
+                .ToList<object>();
         }
     }
 }

@@ -26,9 +26,15 @@ public class AccountsController : ControllerBase
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] Login model)
     {
-        var (success, user, roles) = await _accountService.LoginAsync(model);
+        var (success, user, roles, permissions) = await _accountService.LoginAsync(model);
         if (success)
-            return Ok(new { message = "Login successfully!", username = user!.UserName, roles });
+            return Ok(new
+            {
+                message = "Login successfully!",
+                username = user!.UserName,
+                roles,
+                permissions
+            });
 
         return Unauthorized(new { message = "Invalid username or password!" });
     }

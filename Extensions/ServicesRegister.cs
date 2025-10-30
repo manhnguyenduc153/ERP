@@ -1,9 +1,11 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Authorization;
+using ERP_API.Entities;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Repositories.tRepositories;
 using ERP_API.Services;
 using ERP_API.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ERP_API.Extensions
 {
@@ -14,6 +16,7 @@ namespace ERP_API.Extensions
             //services.RegisterMapsterConfiguration();
 
             services.AddScoped<IUnitOfWork, UnitOfWork<ErpDbContext>>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
             //Account
             services.AddTransient<IAccountRepository, AccountRepository>();
