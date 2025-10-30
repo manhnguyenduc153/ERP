@@ -1,6 +1,9 @@
+using ERP_API.Authorization;
 using ERP_API.Entities;
+using ERP_API.Enums;
 using ERP_API.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -68,7 +71,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-builder.Services.AddAuthorization();
+// Cấu hình Policy tự động cho từng Permission enum
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var permission in Enum.GetValues(typeof(Permission)))
+    {
+        var p = (Permission)permission;
+        options.AddPolicy($"Permission.{p}",
+            policy => policy.Requirements.Add(new PermissionRequirement(p.ToString())));
+    }
+});
 
 builder.Services.RegisterCustomServices();
 
