@@ -4,6 +4,7 @@ using ERP_API.Mappers;
 using ERP_API.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ERP_API.Controllers
 {
@@ -79,6 +80,11 @@ namespace ERP_API.Controllers
             }
 
             var orderPurchase = orderDto.ToEntity();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            orderPurchase.StaffId = int.Parse(userId!);
+
+            // Solve logic kho thêm
 
             var result = await _service.CreateAsync(orderPurchase);
             if (!result)

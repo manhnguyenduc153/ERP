@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ERP_API.DTOS.Order;
 using ERP_API.Entities;
@@ -71,6 +72,11 @@ namespace ERP_API.Controllers
                 }
                 orderEntity.CustomerId = customer.CustomerId;
             }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            orderEntity.StaffId = int.Parse(userId!);
+
+            // Solve thêm logic kho
 
             var result = await _service.CreateOrderAsync(orderEntity);
 
