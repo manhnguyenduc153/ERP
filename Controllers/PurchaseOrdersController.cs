@@ -15,12 +15,14 @@ namespace ERP_API.Controllers
         private readonly IPurchaseOrderService _service;
         private readonly ISupplierService _supplierService;
         private readonly IProductService _productService;
+        private readonly IPurchaseStaffService _purchaseStaffService;
 
-        public PurchaseOrdersController(IPurchaseOrderService service, ISupplierService supplierService, IProductService productService)
+        public PurchaseOrdersController(IPurchaseOrderService service, ISupplierService supplierService, IProductService productService, IPurchaseStaffService purchaseStaffService)
         {
             _service = service;
             _supplierService = supplierService;
             _productService = productService;
+            _purchaseStaffService = purchaseStaffService;
         }
 
         [HttpGet]
@@ -82,9 +84,8 @@ namespace ERP_API.Controllers
             var orderPurchase = orderDto.ToEntity();
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            orderPurchase.StaffId = int.Parse(userId!);
-
-            // Solve logic kho thêm
+            var purchaseStaff = await _purchaseStaffService.GetPurchaseStaffByIdAsync(userId);
+            orderPurchase.Staff = purchaseStaff;
 
             var result = await _service.CreateAsync(orderPurchase);
             if (!result)
