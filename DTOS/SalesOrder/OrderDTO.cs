@@ -7,7 +7,8 @@
         public int? CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string Contact { get; set; }
+        public int? StaffId { get; set; }
+        public string? StaffName { get; set; }
         public List<OrderDetailDTO>? OrderDetails { get; set; }
-
     }
 }

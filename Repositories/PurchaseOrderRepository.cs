@@ -22,16 +22,22 @@ namespace ERP_API.Repositories
         public async Task<PurchaseOrder?> GetByIdAsync(int id)
         {
             return await _dbContext.PurchaseOrders
+                .Include(o => o.Staff)
+                .ThenInclude(s => s.Staff)
                 .Include(o => o.Supplier)
                 .Include(o => o.PurchaseOrderDetails)
+                .ThenInclude(d => d.Product)
                 .FirstOrDefaultAsync(o => o.PurchaseOrderId == id);
         }
 
         public async Task<List<PurchaseOrder>> GetListAysnc()
         {
             return await _dbContext.PurchaseOrders
+                .Include(o => o.Staff)
+                .ThenInclude(s => s.Staff)
                 .Include(o => o.Supplier)
                 .Include(o => o.PurchaseOrderDetails)
+                .ThenInclude(d => d.Product)
                 .ToListAsync();
         }
     }

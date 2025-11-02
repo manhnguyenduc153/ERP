@@ -29,7 +29,8 @@ namespace ERP_API.Controllers
         public async Task<IActionResult> GetPurchaseOrders()
         {
             var orders = await _service.GetListAsync();
-            return Ok(orders);
+            var ordersDto = orders.Select(o => o.ToViewDTO()).ToList();
+            return Ok(ordersDto);
         }
 
         [HttpGet("{id}")]
@@ -40,7 +41,7 @@ namespace ERP_API.Controllers
             {
                 return NotFound();
             }
-            return Ok(order);
+            return Ok(order.ToViewDTO());
         }
 
         [HttpPost]
