@@ -21,6 +21,10 @@ public partial class Employee
 
     public decimal? Salary { get; set; }
 
+    public string? AccountId { get; set; }
+
+    public virtual AspNetUser? Account { get; set; }
+
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
     public virtual Department? Department { get; set; }

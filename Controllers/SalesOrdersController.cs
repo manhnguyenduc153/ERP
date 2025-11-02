@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Transactions;
 using ERP_API.DTOS.Order;
 using ERP_API.Entities;
 using ERP_API.Repositories;
 using ERP_API.Services.IServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP_API.Controllers
@@ -17,11 +19,13 @@ namespace ERP_API.Controllers
     {
         private readonly ISalesOrderService _service;
         private readonly ICustomerService _customerService;
+        private readonly ISaleStaffService _saleStaffService;
 
-        public SalesOrdersController(ISalesOrderService service, ICustomerService customerService)
+        public SalesOrdersController(ISalesOrderService service, ICustomerService customerService, ISaleStaffService saleStaffService)
         {
             _service = service;
             _customerService = customerService;
+            _saleStaffService = saleStaffService;
         }
 
 
@@ -74,9 +78,8 @@ namespace ERP_API.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            orderEntity.StaffId = int.Parse(userId!);
-
-            // Solve thêm logic kho
+            var saleStaff = await _saleStaffService.GetSaleStaffByIdAsync(userId);
+            orderEntity.Staff = saleStaff;
 
             var result = await _service.CreateOrderAsync(orderEntity);
 

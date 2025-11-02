@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace ERP_API.Entities;
 
-public partial class ErpDbContext : IdentityDbContext<AppUser           >
+public partial class ErpDbContext : DbContext
 {
     public ErpDbContext()
     {
@@ -16,14 +15,6 @@ public partial class ErpDbContext : IdentityDbContext<AppUser           >
         : base(options)
     {
     }
-
-    // Xóa bỏ các DbSet này vì Identity đã cung cấp sẵn
-    // public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
-    // public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
-    // public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-    // public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
-    // public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
-    // public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
 
     public virtual DbSet<Attendance> Attendances { get; set; }
 
@@ -68,15 +59,9 @@ public partial class ErpDbContext : IdentityDbContext<AppUser           >
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Gọi base method để Identity tự cấu hình các entity của nó
-        base.OnModelCreating(modelBuilder);
-
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
-
-        // Xóa bỏ tất cả cấu hình cho AspNet* entities vì Identity đã xử lý
-        // Chỉ giữ lại cấu hình cho các entity nghiệp vụ của bạn
 
         modelBuilder.Entity<Attendance>(entity =>
         {
@@ -175,6 +160,8 @@ public partial class ErpDbContext : IdentityDbContext<AppUser           >
 
             entity.HasIndex(e => e.DepartmentId, "DepartmentID");
 
+            entity.HasIndex(e => e.AccountId, "Employee_UNIQUE").IsUnique();
+
             entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
             entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
             entity.Property(e => e.FullName)
@@ -190,6 +177,10 @@ public partial class ErpDbContext : IdentityDbContext<AppUser           >
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
             entity.Property(e => e.Salary).HasPrecision(18, 2);
+
+            entity.HasOne(d => d.Account).WithOne(p => p.Employee)
+                .HasForeignKey<Employee>(d => d.AccountId)
+                .HasConstraintName("Employee_AspNetUsers_FK");
 
             entity.HasOne(d => d.Department).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.DepartmentId)

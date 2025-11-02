@@ -1,4 +1,5 @@
 ﻿using ERP_API.Entities;
+using ERP_API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP_API.Repositories

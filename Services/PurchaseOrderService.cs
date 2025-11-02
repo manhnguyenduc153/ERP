@@ -1,5 +1,5 @@
 ﻿using ERP_API.Entities;
-using ERP_API.Repositories;
+using ERP_API.Repositories.IRepositories;
 using ERP_API.Services.IServices;
 
 namespace ERP_API.Services

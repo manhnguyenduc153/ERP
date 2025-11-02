@@ -59,8 +59,21 @@ namespace ERP_API.Extensions
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddTransient<IProductService, ProductService>();
 
+            // Purchase Staff
+            services.AddScoped<IPurchaseStaffRepository, PurchaseStaffRepository>();
+            services.AddTransient<IPurchaseStaffService, PurchaseStaffService>();
 
+            // Sale Staff
+            services.AddScoped<ISaleStaffRepository, SaleStaffRepository>();
+            services.AddTransient<ISaleStaffService, SaleStaffService>();
 
+            // Store
+            services.AddScoped<IStoreRepository, StoreRepository>();
+            services.AddTransient<IStoreService, StoreService>();
+
+            // Stock Transaction
+            services.AddScoped<IStockTransactionRepository, StockTransactionRepository>();
+            services.AddTransient<IStockTransactionService, StockTransactionService>();
         }
     }
 }
