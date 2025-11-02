@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace ERP_API.Entities;
 
-public partial class ErpDbContext : DbContext
+public partial class ErpDbContext : IdentityDbContext<AppUser>
 {
     public ErpDbContext()
     {
@@ -59,9 +60,24 @@ public partial class ErpDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // GỌI BASE METHOD TRƯỚC để Identity tự cấu hình
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
+
+        // Cấu hình composite key cho AspNetUserLogin
+        modelBuilder.Entity<AspNetUserLogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+        });
+
+        // Cấu hình composite key cho AspNetUserToken
+        modelBuilder.Entity<AspNetUserToken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+        });
 
         modelBuilder.Entity<Attendance>(entity =>
         {
@@ -178,6 +194,7 @@ public partial class ErpDbContext : DbContext
                 .HasCharSet("utf8mb3");
             entity.Property(e => e.Salary).HasPrecision(18, 2);
 
+            // CẬP NHẬT RELATIONSHIP VỚI APPUSER THAY VÌ ASPNETUSER
             entity.HasOne(d => d.Account).WithOne(p => p.Employee)
                 .HasForeignKey<Employee>(d => d.AccountId)
                 .HasConstraintName("Employee_AspNetUsers_FK");
