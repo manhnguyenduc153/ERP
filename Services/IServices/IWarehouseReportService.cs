@@ -9,5 +9,7 @@ namespace ERP_API.Services.IServices
         Task<PagedResultDTO<StockTransactionHistoryDTO>> GetStockHistoryAsync(StockHistoryRequestDTO request);
         Task<PagedResultDTO<CustomerOrderDTO>> GetCustomerOrdersAsync(CustomerOrderRequestDTO request);
         Task<CustomerOrderDTO> GetCustomerOrderDetailAsync(int orderId);
+        Task<DashboardSummaryDTO> GetDashboardSummaryAsync();
+
     }
 }

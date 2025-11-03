@@ -1,6 +1,6 @@
 ﻿using ERP_API.Entities;
 
-namespace ERP_API.Repositories
+namespace ERP_API.Repositories.IRepositories
 {
     public interface IPurchaseOrderRepository
     {

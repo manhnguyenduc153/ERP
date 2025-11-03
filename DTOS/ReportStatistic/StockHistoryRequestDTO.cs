@@ -3,7 +3,7 @@ namespace ERP_API.DTOS.ReportStatistic
     {
         public int? WarehouseId { get; set; }
         public int? ProductId { get; set; }
-        public string TransactionType { get; set; }
+        public string? TransactionType { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public int PageNumber { get; set; } = 1;

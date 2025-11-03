@@ -1,9 +1,11 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Authorization;
+using ERP_API.Entities;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Repositories.tRepositories;
 using ERP_API.Services;
 using ERP_API.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ERP_API.Extensions
 {
@@ -14,6 +16,14 @@ namespace ERP_API.Extensions
             //services.RegisterMapsterConfiguration();
 
             services.AddScoped<IUnitOfWork, UnitOfWork<ErpDbContext>>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+
+            //Account
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddScoped<IAccountService, AccountService>();
+
+            //Role
+            services.AddScoped<IRoleService, RoleService>();
 
             //Customer
             services.AddTransient<Repositories.IRepositories.ICustomerRepository, CustomerRepository>();
@@ -49,9 +59,26 @@ namespace ERP_API.Extensions
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddTransient<IProductService, ProductService>();
 
+<<<<<<< HEAD
             services.AddTransient<IWarehouseReportRepository, WarehouseReportRepository>();
             services.AddScoped<IWarehouseReportService, WarehouseReportService>();
+=======
+            // Purchase Staff
+            services.AddScoped<IPurchaseStaffRepository, PurchaseStaffRepository>();
+            services.AddTransient<IPurchaseStaffService, PurchaseStaffService>();
 
+            // Sale Staff
+            services.AddScoped<ISaleStaffRepository, SaleStaffRepository>();
+            services.AddTransient<ISaleStaffService, SaleStaffService>();
+>>>>>>> ca65458621f40dd3f057bc1e8c670d4d63300bbb
+
+            // Store
+            services.AddScoped<IStoreRepository, StoreRepository>();
+            services.AddTransient<IStoreService, StoreService>();
+
+            // Stock Transaction
+            services.AddScoped<IStockTransactionRepository, StockTransactionRepository>();
+            services.AddTransient<IStockTransactionService, StockTransactionService>();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace ERP_API.Services
         public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(WarehouseStatisticRequestDTO request)
         {
             if (!request.FromDate.HasValue)
-                request.FromDate = DateTime.Now.AddMonths(-1);
+                request.FromDate = DateTime.Now.AddMonths(-15);
 
             if (!request.ToDate.HasValue)
                 request.ToDate = DateTime.Now;
@@ -61,6 +61,13 @@ namespace ERP_API.Services
                 throw new KeyNotFoundException($"Không tìm thấy đơn hàng với ID {orderId}");
 
             return order;
+        }
+         public async Task<DashboardSummaryDTO> GetDashboardSummaryAsync()
+        {
+          
+                var summary = await _repository.GetDashboardSummaryAsync();
+                return summary;
+           
         }
     }
 }

@@ -34,6 +34,8 @@ namespace ERP_API.Mappers
                 CustomerId = salesOrder.Customer!.CustomerId,
                 CustomerName = salesOrder.Customer?.Name ?? string.Empty,
                 Contact = salesOrder.Customer?.Contact ?? string.Empty,
+                StaffId = salesOrder.StaffId,
+                StaffName = salesOrder.Staff?.Staff.FullName ?? string.Empty,
                 OrderDetails = salesOrder.SalesOrderDetails.Select(sod => new OrderDetailDTO
                 {
                     DetailId = sod.DetailId,

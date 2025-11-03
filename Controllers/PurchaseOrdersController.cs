@@ -4,6 +4,7 @@ using ERP_API.Mappers;
 using ERP_API.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ERP_API.Controllers
 {
@@ -14,19 +15,22 @@ namespace ERP_API.Controllers
         private readonly IPurchaseOrderService _service;
         private readonly ISupplierService _supplierService;
         private readonly IProductService _productService;
+        private readonly IPurchaseStaffService _purchaseStaffService;
 
-        public PurchaseOrdersController(IPurchaseOrderService service, ISupplierService supplierService, IProductService productService)
+        public PurchaseOrdersController(IPurchaseOrderService service, ISupplierService supplierService, IProductService productService, IPurchaseStaffService purchaseStaffService)
         {
             _service = service;
             _supplierService = supplierService;
             _productService = productService;
+            _purchaseStaffService = purchaseStaffService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPurchaseOrders()
         {
             var orders = await _service.GetListAsync();
-            return Ok(orders);
+            var ordersDto = orders.Select(o => o.ToViewDTO()).ToList();
+            return Ok(ordersDto);
         }
 
         [HttpGet("{id}")]
@@ -37,7 +41,7 @@ namespace ERP_API.Controllers
             {
                 return NotFound();
             }
-            return Ok(order);
+            return Ok(order.ToViewDTO());
         }
 
         [HttpPost]
@@ -46,8 +50,6 @@ namespace ERP_API.Controllers
 
             if (orderDto.SupplierId <= 0)
             {
-                // Handle new supplier creation logic here
-                // For example, create a new Supplier entity and assign it to purchaseOrder.Supplier
                 Supplier supplier = new Supplier
                 {
                     SupplierName = orderDto.SupplierName,
@@ -81,6 +83,10 @@ namespace ERP_API.Controllers
             }
 
             var orderPurchase = orderDto.ToEntity();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var purchaseStaff = await _purchaseStaffService.GetPurchaseStaffByIdAsync(userId);
+            orderPurchase.Staff = purchaseStaff;
 
             var result = await _service.CreateAsync(orderPurchase);
             if (!result)

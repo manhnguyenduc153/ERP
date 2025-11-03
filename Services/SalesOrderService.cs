@@ -11,14 +11,36 @@ namespace ERP_API.Services
     public class SalesOrderService : ISalesOrderService
     {
         private readonly ISalesOrderRepository _repository;
+        private readonly IStockTransactionService _stockTransactionService;
 
-        public SalesOrderService(ISalesOrderRepository repository)
+        public SalesOrderService(ISalesOrderRepository repository, IStockTransactionService stockTransactionService)
         {
             _repository = repository;
+            _stockTransactionService = stockTransactionService;
         }
 
         public async Task<bool> CreateOrderAsync(SalesOrder order)
         {
+
+            var warehouseId = order.Staff!.Store!.WarehouseId;
+
+            var stockTransactions = new List<StockTransaction>();
+            foreach (var detail in order.SalesOrderDetails)
+            {
+                var stockTransaction = new StockTransaction
+                {
+                    ProductId = detail.ProductId,
+                    WarehouseId = warehouseId,
+                    Quantity = detail.Quantity,
+                    TransactionType = TransactionDirection.OUT,
+                    TransactionDate = DateTime.UtcNow
+                };
+                stockTransactions.Add(stockTransaction);
+            }
+            var stockResult = await _stockTransactionService.AddMultipleStockTransactionsAsync(stockTransactions);
+            if (!stockResult)
+                return false;
+
             return await _repository.CreateOrderAsync(order);
         }
 

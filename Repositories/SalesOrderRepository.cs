@@ -31,6 +31,8 @@ namespace ERP_API.Repositories
         public async Task<IEnumerable<SalesOrder>> GetAllOrdersAsync()
         {
             return await _dbContext.SalesOrders
+                    .Include(o => o.Staff)
+                    .ThenInclude(s => s.Staff)
                     .Include(o => o.Customer)
                     .Include(o => o.SalesOrderDetails)
                     .ThenInclude(od => od.Product)
@@ -40,9 +42,11 @@ namespace ERP_API.Repositories
         public async Task<SalesOrder?> GetOrderByIdAsync(int id)
         {
             return await _dbContext.SalesOrders
-                .Include(o => o.Customer)
-                .Include(o => o.SalesOrderDetails)
-                .ThenInclude(od => od.Product)
+                    .Include(o => o.Staff)
+                    .ThenInclude(s => s.Staff)
+                    .Include(o => o.Customer)
+                    .Include(o => o.SalesOrderDetails)
+                    .ThenInclude(od => od.Product)
                 .FirstOrDefaultAsync(o => o.SalesOrderId == id);
         }
 
