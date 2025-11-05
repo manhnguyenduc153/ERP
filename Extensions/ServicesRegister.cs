@@ -84,6 +84,9 @@ namespace ERP_API.Extensions
             //Department
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IDepartmentService, DepartmentService>();
+
+            // Audit Log
+            services.AddScoped<IAuditLogService, AuditLogService>();
         }
     }
 }

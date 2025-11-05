@@ -14,10 +14,12 @@ namespace ERP_API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _service;
+        private readonly IAuditLogService _auditLogService;
 
-        public ProductsController(IProductService service)
+        public ProductsController(IProductService service, IAuditLogService auditLogService)
         {
             _service = service;
+            _auditLogService = auditLogService;
         }
 
         [HttpGet]
@@ -43,6 +45,14 @@ namespace ERP_API.Controllers
         {
             var product = createProductDTO.ToEntity();
 
+            // Ghi log - Service sẽ tự động kiểm tra Success/Failed
+            await _auditLogService.LogAsync(
+                action: "CREATE_PRODUCT",
+                endpoint: "/api/products",
+                oldValue: null,
+                newValue: product
+            );
+
             var result = await _service.CreateProductAsync(product);
             if (result)
             {
@@ -55,7 +65,18 @@ namespace ERP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductDTO updateProductDTO)
         {
+            // Lấy dữ liệu cũ trước khi update
+            var oldProduct = await _service.GetProductByIdAsync(updateProductDTO.ProductId);
             var product = updateProductDTO.ToEntity();
+            
+            // Ghi log - Service sẽ tự động kiểm tra Success/Failed
+            await _auditLogService.LogAsync(
+                action: "UPDATE_PRODUCT",
+                endpoint: $"/api/products/{updateProductDTO.ProductId}",
+                oldValue: oldProduct,
+                newValue: product
+            );
+            
             var result = await _service.UpdateProductAsync(updateProductDTO.ProductId, product);
             if (result)
             {
@@ -67,6 +88,17 @@ namespace ERP_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
+            // Lấy dữ liệu trước khi xóa
+            var product = await _service.GetProductByIdAsync(id);
+            
+            // Ghi log - Service sẽ tự động kiểm tra Success/Failed
+            await _auditLogService.LogAsync(
+                action: "DELETE_PRODUCT",
+                endpoint: $"/api/products/{id}",
+                oldValue: product,
+                newValue: null
+            );
+            
             var result = await _service.DeleteProductAsync(id);
             if (result)
             {

@@ -18,4 +18,6 @@ public partial class AuditLog
     public string? New { get; set; }
 
     public string Endpoint { get; set; } = null!;
+
+    public string Status { get; set; } = null!;
 }

@@ -116,6 +116,10 @@ public partial class ErpDbContext : IdentityDbContext<AppUser>
                 .HasColumnType("datetime");
             entity.Property(e => e.Endpoint).HasMaxLength(100);
             entity.Property(e => e.UserId).HasMaxLength(200);
+            entity.Property(e => e.Status)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasDefaultValue("SUCCESS");
         });
 
         modelBuilder.Entity<Category>(entity =>
