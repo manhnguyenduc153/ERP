@@ -12,45 +12,45 @@ namespace ERP_API.Repositories
         {
             _context = context;
         }
-public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(WarehouseStatisticRequestDTO request)
-{
-    // THÊM .Include(x => x.Warehouse) VÀO ĐÂY
-    var query = _context.StockTransactions
-        .Include(x => x.Warehouse)  // ← FIX: THÊM DÒNG NÀY
-        .AsQueryable();
-
-    if (request.WarehouseId.HasValue)
-        query = query.Where(x => x.WarehouseId == request.WarehouseId.Value);
-
-    if (request.FromDate.HasValue)
-        query = query.Where(x => x.TransactionDate >= request.FromDate.Value);
-
-    if (request.ToDate.HasValue)
-        query = query.Where(x => x.TransactionDate <= request.ToDate.Value);
-
-    if (request.ProductId.HasValue)
-        query = query.Where(x => x.ProductId == request.ProductId.Value);
-
-    var statistics = await query
-        .GroupBy(x => new { x.WarehouseId, x.Warehouse.WarehouseName, x.Warehouse.Location })
-        .Select(g => new WarehouseStatisticDTO
+        public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(WarehouseStatisticRequestDTO request)
         {
-            WarehouseId = g.Key.WarehouseId ?? 0,
-            WarehouseName = g.Key.WarehouseName ?? "",  // Đơn giản hóa
-            Location = g.Key.Location ?? "",
-            TotalImport = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0),
-            TotalExport = g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0),
-            DamagedItems = g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
-            CurrentStock = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0) -
-                         g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0) -
-                         g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
-            FromDate = request.FromDate ?? DateTime.MinValue,
-            ToDate = request.ToDate ?? DateTime.MaxValue
-        })
-        .ToListAsync();
+            // THÊM .Include(x => x.Warehouse) VÀO ĐÂY
+            var query = _context.StockTransactions
+                .Include(x => x.Warehouse)  // ← FIX: THÊM DÒNG NÀY
+                .AsQueryable();
 
-    return statistics;
-}
+            if (request.WarehouseId.HasValue)
+                query = query.Where(x => x.WarehouseId == request.WarehouseId.Value);
+
+            if (request.FromDate.HasValue)
+                query = query.Where(x => x.TransactionDate >= request.FromDate.Value);
+
+            if (request.ToDate.HasValue)
+                query = query.Where(x => x.TransactionDate <= request.ToDate.Value);
+
+            if (request.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == request.ProductId.Value);
+
+            var statistics = await query
+                .GroupBy(x => new { x.WarehouseId, x.Warehouse.WarehouseName, x.Warehouse.Location })
+                .Select(g => new WarehouseStatisticDTO
+                {
+                    WarehouseId = g.Key.WarehouseId ?? 0,
+                    WarehouseName = g.Key.WarehouseName ?? "",  // Đơn giản hóa
+                    Location = g.Key.Location ?? "",
+                    TotalImport = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0),
+                    TotalExport = g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0),
+                    DamagedItems = g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
+                    CurrentStock = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0) -
+                                 g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0) -
+                                 g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
+                    FromDate = request.FromDate ?? DateTime.MinValue,
+                    ToDate = request.ToDate ?? DateTime.MaxValue
+                })
+                .ToListAsync();
+
+            return statistics;
+        }
         public async Task<List<ProductStockDTO>> GetProductStockDetailAsync(WarehouseStatisticRequestDTO request)
         {
             var query = _context.StockTransactions
@@ -99,10 +99,10 @@ public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(Wareh
 
             return productStocks;
         }
-
         public async Task<PagedResultDTO<StockTransactionHistoryDTO>> GetStockHistoryAsync(StockHistoryRequestDTO request)
         {
             request.TransactionType ??= "ALL";
+
             var query = _context.StockTransactions
                 .Include(x => x.Product)
                 .Include(x => x.Warehouse)
@@ -113,6 +113,8 @@ public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(Wareh
 
             if (request.ProductId.HasValue)
                 query = query.Where(x => x.ProductId == request.ProductId.Value);
+
+            query = query.Where(x => x.TransactionType == "IMPORT" || x.TransactionType == "EXPORT");
 
             if (!string.IsNullOrEmpty(request.TransactionType) && request.TransactionType != "ALL")
                 query = query.Where(x => x.TransactionType == request.TransactionType);
@@ -125,33 +127,62 @@ public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(Wareh
 
             var totalRecords = await query.CountAsync();
 
-            var transactions = await query
+            var stockTransactions = await query
                 .OrderByDescending(x => x.TransactionDate)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(x => new StockTransactionHistoryDTO
-                {
-                    TransactionId = x.TransactionId,
-                    ProductId = x.ProductId ?? 0,
-                    ProductName = x.Product.ProductName == null ? "" : x.Product.ProductName,
-                    TransactionType = x.TransactionType == null ? "" : x.TransactionType,
-                    Quantity = x.Quantity ?? 0,
-                    TransactionDate = x.TransactionDate ?? DateTime.Now,
-                    WarehouseId = x.WarehouseId,
-                    WarehouseName = x.Warehouse.WarehouseName == null ? "" : x.Warehouse.WarehouseName,
-                    Reference = ""
-                })
                 .ToListAsync();
+
+            var result = new List<StockTransactionHistoryDTO>();
+
+            foreach (var trans in stockTransactions)
+            {
+                decimal unitPrice = 0;
+
+                if (trans.TransactionType == "IMPORT")
+                {
+                    var poDetail = await _context.PurchaseOrderDetails
+                       .Where(x => x.ProductId == trans.ProductId)
+                       .OrderByDescending(x => x.PurchaseOrder.OrderDate)
+                       .FirstOrDefaultAsync();
+
+                    if (poDetail != null)
+                        unitPrice = poDetail.UnitPrice ?? 0;
+                }
+                else if (trans.TransactionType == "EXPORT")
+                {
+                    var soDetail = await _context.SalesOrderDetails
+                           .Where(x => x.ProductId == trans.ProductId)
+                           .OrderByDescending(x => x.SalesOrder.OrderDate)
+                           .FirstOrDefaultAsync();
+
+                    if (soDetail != null)
+                        unitPrice = soDetail.UnitPrice ?? 0;
+                }
+
+                result.Add(new StockTransactionHistoryDTO
+                {
+                    TransactionId = trans.TransactionId,
+                    ProductId = trans.ProductId ?? 0,
+                    ProductName = trans.Product?.ProductName ?? "",
+                    TransactionType = trans.TransactionType ?? "",
+                    Quantity = trans.Quantity ?? 0,
+                    TransactionDate = trans.TransactionDate ?? DateTime.Now,
+                    WarehouseId = trans.WarehouseId ?? 0,
+                    WarehouseName = trans.Warehouse?.WarehouseName ?? "",
+                    UnitPrice = unitPrice,
+                    TotalValue = (trans.Quantity ?? 0) * unitPrice
+                });
+            }
 
             return new PagedResultDTO<StockTransactionHistoryDTO>
             {
-                Data = transactions,
+                Data = result,
                 TotalRecords = totalRecords,
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize
             };
         }
-
         public async Task<PagedResultDTO<CustomerOrderDTO>> GetCustomerOrdersAsync(CustomerOrderRequestDTO request)
         {
             var query = _context.SalesOrders
