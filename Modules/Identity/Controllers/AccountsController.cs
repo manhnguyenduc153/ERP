@@ -1,8 +1,10 @@
 ﻿using ERP_API.Models;
+using ERP_API.Entities;
 using ERP_API.Services.IServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ERP_API.Controllers
+namespace ERP_API.Modules.Identity.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -92,14 +94,17 @@ namespace ERP_API.Controllers
                 return BadRequest("User does not exist!");
             }
 
-            var result = await _userManager.AddToRoleAsync(user, model.Role);
-
-            if (result.Succeeded)
+            // Add multiple roles
+            foreach (var role in model.Roles)
             {
-                return Ok(new { message = "Assign role successfully!" });
+                var result = await _userManager.AddToRoleAsync(user, role);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
             }
 
-            return BadRequest(result.Errors);
+            return Ok(new { message = "Assign roles successfully!" });
         }
 
         [HttpGet("CurrentUser")]
