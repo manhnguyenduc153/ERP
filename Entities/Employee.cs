@@ -23,6 +23,10 @@ public partial class Employee
 
     public string? AccountId { get; set; }
 
+    public string? Email { get; set; }
+
+    public string? PhoneNumber { get; set; }
+    
     public virtual AspNetUser? Account { get; set; }
 
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
