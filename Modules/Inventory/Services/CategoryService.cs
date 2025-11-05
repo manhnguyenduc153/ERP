@@ -40,6 +40,33 @@ namespace ERP_API.Services
             }
         }
 
+        //public async Task<ResponseData<object>> Insert(CategorySaveModel model)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrWhiteSpace(model.CategoryName))
+        //            return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
+
+        //        var entity = model.Adapt<Category>();
+
+        //        await _categoryRepository.AddAsync(entity);
+
+        //        var result = await _categoryRepository.SaveChangesAsync();
+
+        //        if (result > 0)
+        //        {
+        //            return new ResponseData<object>(true, entity);
+        //        }
+
+        //        return new ResponseData<object>(ErrorCodeAPI.NotOk);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, ex.Message);
+        //        return new ResponseData<object>(ex.Message);
+        //    }
+        //}
+
         public async Task<ResponseData<object>> Insert(CategorySaveModel model)
         {
             try
@@ -47,16 +74,16 @@ namespace ERP_API.Services
                 if (string.IsNullOrWhiteSpace(model.CategoryName))
                     return new ResponseData<object>(ErrorCodeAPI.InvalidInput);
 
-                var entity = model.Adapt<Category>();
+                var entity = new CategoryBuilder()
+                    .WithName(model.CategoryName)
+                    .WithDescription(model.Description)
+                    .Build();
 
                 await _categoryRepository.AddAsync(entity);
-
                 var result = await _categoryRepository.SaveChangesAsync();
 
                 if (result > 0)
-                {
                     return new ResponseData<object>(true, entity);
-                }
 
                 return new ResponseData<object>(ErrorCodeAPI.NotOk);
             }
@@ -66,6 +93,7 @@ namespace ERP_API.Services
                 return new ResponseData<object>(ex.Message);
             }
         }
+
 
         public async Task<ResponseData<object>> Update(CategorySaveModel model)
         {
