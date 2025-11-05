@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace ERP_API.Helpers
+namespace ERP_API.Utilities
 {
     public static class EnumExtensions
     {
