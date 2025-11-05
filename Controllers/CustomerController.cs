@@ -6,7 +6,7 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/customers")]
     public class CustomerController : ControllerBase
     {
@@ -60,7 +60,7 @@ namespace ERP_API.Controllers
         }
 
         [HttpGet("v2")]
-        public  async Task<IActionResult> GetAllCustomers()
+        public async Task<IActionResult> GetAllCustomers()
         {
             var customers = await _customerService.GetAllCustomersAsync();
             return Ok(customers);

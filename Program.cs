@@ -69,16 +69,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-// Cấu hình Policy tự động cho từng Permission enum
-builder.Services.AddAuthorization(options =>
-{
-    foreach (var permission in Enum.GetValues(typeof(Permission)))
-    {
-        var p = (Permission)permission;
-        options.AddPolicy($"Permission.{p}",
-            policy => policy.Requirements.Add(new PermissionRequirement(p.ToString())));
-    }
-});
+builder.Services.AddAuthorization();
 
 builder.Services.RegisterCustomServices();
 
