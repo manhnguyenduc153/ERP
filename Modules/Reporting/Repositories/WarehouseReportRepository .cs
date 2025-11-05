@@ -12,45 +12,73 @@ namespace ERP_API.Repositories
         {
             _context = context;
         }
-        public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(WarehouseStatisticRequestDTO request)
+      public async Task<List<WarehouseStatisticDTO>> GetWarehouseStatisticsAsync(WarehouseStatisticRequestDTO request)
+{
+    var allWarehouses = await _context.Warehouses.ToListAsync();
+
+    var query = _context.StockTransactions
+        .Include(x => x.Warehouse)
+        .AsQueryable();
+
+    if (request.WarehouseId.HasValue)
+        query = query.Where(x => x.WarehouseId == request.WarehouseId.Value);
+
+    if (request.FromDate.HasValue)
+        query = query.Where(x => x.TransactionDate >= request.FromDate.Value);
+
+    if (request.ToDate.HasValue)
+        query = query.Where(x => x.TransactionDate <= request.ToDate.Value);
+
+    if (request.ProductId.HasValue)
+        query = query.Where(x => x.ProductId == request.ProductId.Value);
+
+    var transactions = await query.ToListAsync();
+
+    var groupedData = transactions
+        .GroupBy(x => new { x.WarehouseId, x.Warehouse.WarehouseName, x.Warehouse.Location })
+        .Select(g => new WarehouseStatisticDTO
         {
-            // THÊM .Include(x => x.Warehouse) VÀO ĐÂY
-            var query = _context.StockTransactions
-                .Include(x => x.Warehouse)  // ← FIX: THÊM DÒNG NÀY
-                .AsQueryable();
+            WarehouseId = g.Key.WarehouseId ?? 0,
+            WarehouseName = g.Key.WarehouseName ?? "",
+            Location = g.Key.Location ?? "",
+            TotalImport = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0),
+            TotalExport = g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0),
+            DamagedItems = g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
+            CurrentStock = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0) -
+                         g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0) -
+                         g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
+            FromDate = request.FromDate ?? DateTime.MinValue,
+            ToDate = request.ToDate ?? DateTime.MaxValue
+        })
+        .ToList();
 
-            if (request.WarehouseId.HasValue)
-                query = query.Where(x => x.WarehouseId == request.WarehouseId.Value);
+    var result = new List<WarehouseStatisticDTO>();
 
-            if (request.FromDate.HasValue)
-                query = query.Where(x => x.TransactionDate >= request.FromDate.Value);
+    // Thêm các warehouse có dữ liệu giao dịch
+    result.AddRange(groupedData);
 
-            if (request.ToDate.HasValue)
-                query = query.Where(x => x.TransactionDate <= request.ToDate.Value);
+    // Thêm các warehouse trống (không có giao dịch nào)
+    var warehousesWithData = groupedData.Select(x => x.WarehouseId).ToHashSet();
+    var emptyWarehouses = allWarehouses
+        .Where(w => !warehousesWithData.Contains(w.WarehouseId))
+        .Select(w => new WarehouseStatisticDTO
+        {
+            WarehouseId = w.WarehouseId,
+            WarehouseName = w.WarehouseName ?? "",
+            Location = w.Location ?? "",
+            TotalImport = 0,
+            TotalExport = 0,
+            DamagedItems = 0,
+            CurrentStock = 0,
+            FromDate = request.FromDate ?? DateTime.MinValue,
+            ToDate = request.ToDate ?? DateTime.MaxValue
+        })
+        .ToList();
 
-            if (request.ProductId.HasValue)
-                query = query.Where(x => x.ProductId == request.ProductId.Value);
+    result.AddRange(emptyWarehouses);
 
-            var statistics = await query
-                .GroupBy(x => new { x.WarehouseId, x.Warehouse.WarehouseName, x.Warehouse.Location })
-                .Select(g => new WarehouseStatisticDTO
-                {
-                    WarehouseId = g.Key.WarehouseId ?? 0,
-                    WarehouseName = g.Key.WarehouseName ?? "",  // Đơn giản hóa
-                    Location = g.Key.Location ?? "",
-                    TotalImport = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0),
-                    TotalExport = g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0),
-                    DamagedItems = g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
-                    CurrentStock = g.Where(x => x.TransactionType == "IMPORT").Sum(x => x.Quantity ?? 0) -
-                                 g.Where(x => x.TransactionType == "EXPORT").Sum(x => x.Quantity ?? 0) -
-                                 g.Where(x => x.TransactionType == "DAMAGED").Sum(x => x.Quantity ?? 0),
-                    FromDate = request.FromDate ?? DateTime.MinValue,
-                    ToDate = request.ToDate ?? DateTime.MaxValue
-                })
-                .ToListAsync();
-
-            return statistics;
-        }
+    return result;
+}
         public async Task<List<ProductStockDTO>> GetProductStockDetailAsync(WarehouseStatisticRequestDTO request)
         {
             var query = _context.StockTransactions
