@@ -1,4 +1,6 @@
 ﻿using ERP_API.Authorization;
+using ERP_API.Core.Infrastructure.Logging;
+using ERP_API.Core.Infrastructure.Logging.Decorators;
 using ERP_API.Entities;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
@@ -84,6 +86,17 @@ namespace ERP_API.Extensions
             //Department
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IAuditLogger>(provider =>
+            {
+                var dbContext = provider.GetRequiredService<ErpDbContext>();
+                IAuditLogger logger = new DatabaseAuditLogger(dbContext);
+                logger = new PerformanceAuditLoggerDecorator(logger, warningThresholdMs: 500);
+                logger = new FileAuditLoggerDecorator(logger);
+                logger = new ConsoleAuditLoggerDecorator(logger, enableColors: true);
+                return logger;
+            });
+            
+            services.AddScoped<IAuditLogService, AuditLogService>();
         }
     }
 }
