@@ -20,8 +20,6 @@ public partial class ErpDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
 
-    public virtual DbSet<AspNetRole1> AspNetRoles1 { get; set; }
-
     public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
 
     public virtual DbSet<AspNetUser> AspNetUsers { get; set; }

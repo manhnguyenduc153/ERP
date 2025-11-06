@@ -45,5 +45,5 @@ public partial class AspNetUser
 
     public virtual Employee? Employee { get; set; }
 
-    public virtual ICollection<AspNetRole1> Roles { get; set; } = new List<AspNetRole1>();
+    public virtual ICollection<AspNetRole> Roles { get; set; } = new List<AspNetRole>();
 }

@@ -13,5 +13,5 @@ public partial class AspNetRoleClaim
 
     public string? ClaimValue { get; set; }
 
-    public virtual AspNetRole1 Role { get; set; } = null!;
+    public virtual AspNetRole Role { get; set; } = null!;
 }
