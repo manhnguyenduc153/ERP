@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using ERP_API.Models;
 
 namespace ERP_API.Core.Infrastructure.Logging.Decorators
 {

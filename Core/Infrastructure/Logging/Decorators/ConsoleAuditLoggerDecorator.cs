@@ -1,3 +1,5 @@
+using ERP_API.Models;
+
 namespace ERP_API.Core.Infrastructure.Logging.Decorators
 {
     public class ConsoleAuditLoggerDecorator : AuditLoggerDecorator
