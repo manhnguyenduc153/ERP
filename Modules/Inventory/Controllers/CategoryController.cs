@@ -6,7 +6,6 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Admin")]
     [Route("api/categories")]
     public class CategoryController : ControllerBase
     {

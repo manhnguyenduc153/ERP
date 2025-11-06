@@ -6,7 +6,6 @@ using ERP_API.Services.IServices;
 namespace ERP_API.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Admin")]
     [Route("api/warehouses")]
     public class WarehouseController : ControllerBase
     {
