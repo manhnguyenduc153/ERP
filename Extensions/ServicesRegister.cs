@@ -90,7 +90,6 @@ namespace ERP_API.Extensions
             {
                 var dbContext = provider.GetRequiredService<ErpDbContext>();
                 IAuditLogger logger = new DatabaseAuditLogger(dbContext);
-                logger = new PerformanceAuditLoggerDecorator(logger, warningThresholdMs: 500);
                 logger = new FileAuditLoggerDecorator(logger);
                 logger = new ConsoleAuditLoggerDecorator(logger, enableColors: true);
                 return logger;
