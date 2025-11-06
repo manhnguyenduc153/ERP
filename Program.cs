@@ -1,5 +1,5 @@
 using ERP_API.Authorization;
-using ERP_API.Entities;
+using ERP_API.Core.Database.Entities;
 using ERP_API.Enums;
 using ERP_API.Extensions;
 using Microsoft.AspNetCore.Identity;

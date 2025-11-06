@@ -1,5 +1,5 @@
 ﻿using ERP_API.Authorization;
-using ERP_API.Entities;
+using ERP_API.Core.Database.Entities;
 using ERP_API.Repositories;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Repositories.tRepositories;

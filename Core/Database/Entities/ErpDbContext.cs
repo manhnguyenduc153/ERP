@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
-namespace ERP_API.Entities;
+namespace ERP_API.Core.Database.Entities;
 
 public partial class ErpDbContext : IdentityDbContext<AppUser>
 {

@@ -1,4 +1,4 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Core.Database.Entities;
 using ERP_API.Enums;
 using ERP_API.Models;
 using ERP_API.Repositories;
@@ -81,7 +81,7 @@ namespace ERP_API.Services
 
                 var result = await _warehouseRepository.SaveChangesAsync();
 
-                if(result > 0)
+                if (result > 0)
                 {
                     return new ResponseData<object>(true, updateEntity);
                 }

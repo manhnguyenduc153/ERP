@@ -1,6 +1,6 @@
 ﻿using ERP_API.Utilities;
 using Dapper;
-using ERP_API.Entities;
+using ERP_API.Core.Database.Entities;
 using ERP_API.Models;
 using ERP_API.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
