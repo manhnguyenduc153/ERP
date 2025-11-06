@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ERP_API.Entities;
+namespace ERP_API.Core.Database.Entities;
 
 public partial class SalesOrder
 {

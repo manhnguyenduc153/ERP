@@ -1,4 +1,4 @@
-using ERP_API.Entities;
+using ERP_API.Core.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP_API.Repositories
@@ -81,8 +81,8 @@ namespace ERP_API.Repositories
                     FullName = e.FullName,
                     Gender = e.Gender,
                     DateOfBirth = ConvertToDateTime(e.DateOfBirth),
-                    Email = e.Email,         
-                    Phone = e.PhoneNumber,    
+                    Email = e.Email,
+                    Phone = e.PhoneNumber,
                     Position = e.Position,
                     DepartmentId = e.DepartmentId ?? 0,
                     DepartmentName = e.Department.DepartmentName,
@@ -115,8 +115,8 @@ namespace ERP_API.Repositories
                 FullName = employee.FullName,
                 Gender = employee.Gender,
                 DateOfBirth = ConvertToDateTime(employee.DateOfBirth),
-                Email = employee.Email,           
-                Phone = employee.PhoneNumber,     
+                Email = employee.Email,
+                Phone = employee.PhoneNumber,
                 Position = employee.Position,
                 DepartmentId = employee.DepartmentId ?? 0,
                 DepartmentName = employee.Department?.DepartmentName,
@@ -134,8 +134,8 @@ namespace ERP_API.Repositories
                 FullName = dto.FullName,
                 Gender = dto.Gender,
                 DateOfBirth = DateOnly.FromDateTime(dto.DateOfBirth),
-                Email = dto.Email,            
-                PhoneNumber = dto.Phone,        
+                Email = dto.Email,
+                PhoneNumber = dto.Phone,
                 Position = dto.Position,
                 DepartmentId = dto.DepartmentId,
                 HireDate = DateOnly.FromDateTime(dto.HireDate),
@@ -156,8 +156,8 @@ namespace ERP_API.Repositories
             employee.FullName = dto.FullName;
             employee.Gender = dto.Gender;
             employee.DateOfBirth = DateOnly.FromDateTime(dto.DateOfBirth);
-            employee.Email = dto.Email;            
-            employee.PhoneNumber = dto.Phone;        
+            employee.Email = dto.Email;
+            employee.PhoneNumber = dto.Phone;
             employee.Position = dto.Position;
             employee.DepartmentId = dto.DepartmentId;
             employee.HireDate = DateOnly.FromDateTime(dto.HireDate);

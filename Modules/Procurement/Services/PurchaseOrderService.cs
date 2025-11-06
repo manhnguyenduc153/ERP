@@ -1,4 +1,4 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Core.Database.Entities;
 using ERP_API.Repositories.IRepositories;
 using ERP_API.Services.IServices;
 

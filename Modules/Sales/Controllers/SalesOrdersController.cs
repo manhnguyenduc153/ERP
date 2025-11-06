@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Transactions;
 using ERP_API.DTOS.Order;
-using ERP_API.Entities;
+using ERP_API.Core.Database.Entities;
 using ERP_API.Repositories;
 using ERP_API.Services.IServices;
 using Microsoft.AspNetCore.Identity;

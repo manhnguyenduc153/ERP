@@ -1,4 +1,4 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Core.Database.Entities;
 using ERP_API.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
