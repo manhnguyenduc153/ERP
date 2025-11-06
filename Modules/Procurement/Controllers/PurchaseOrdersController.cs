@@ -1,5 +1,5 @@
 ﻿using ERP_API.DTOS.PurchaseOrder;
-using ERP_API.Entities;
+using ERP_API.Core.Database.Entities;
 using ERP_API.Mappers;
 using ERP_API.Services.IServices;
 using Microsoft.AspNetCore.Http;

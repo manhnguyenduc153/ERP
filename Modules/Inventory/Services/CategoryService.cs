@@ -1,4 +1,4 @@
-﻿using ERP_API.Entities;
+﻿using ERP_API.Core.Database.Entities;
 using ERP_API.Enums;
 using ERP_API.Models;
 using ERP_API.Models;
@@ -112,7 +112,7 @@ namespace ERP_API.Services
 
                 var result = await _categoryRepository.SaveChangesAsync();
 
-                if(result > 0)
+                if (result > 0)
                 {
                     return new ResponseData<object>(true, updateEntity);
                 }
@@ -162,7 +162,7 @@ namespace ERP_API.Services
 
                 await _categoryRepository.DeleteAsync(entity);
 
-                int result = await _categoryRepository.SaveChangesAsync(); 
+                int result = await _categoryRepository.SaveChangesAsync();
 
                 if (result > 0)
                     return new ResponseData<object>(true, entity);
